@@ -229,7 +229,19 @@ def apply_theme(fig):
 def main():
     # Header
     st.markdown('<h1 class="main-header">Water Resources Frequency Analysis</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #64748b; margin-bottom: 2rem;"><em>From Data Exploration to Engineering Design</em></p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #64748b; margin-bottom: 1rem;"><em>From Data Exploration to Engineering Design</em></p>', unsafe_allow_html=True)
+    
+    # Attribution
+    st.markdown("""
+    <div style="text-align: center; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); 
+                 padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; border: 1px solid #0ea5e9;">
+        <p style="margin: 0; font-size: 0.95rem; color: #0c4a6e;">
+            <strong>🎓 Made by TA Saurav Bhattarai</strong> for the class of <strong>Advanced Water Resource Engineering</strong><br>
+            taught by <strong>Dr. Rocky Talchabhadel</strong> at <strong>Jackson State University</strong> - Fall 2025<br>
+            <span style="color: #0369a1;">🐍 Built with Python & Streamlit</span>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Progress tracking
     if 'completed_modules' not in st.session_state:
@@ -1253,9 +1265,19 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown("""
-    <div style="text-align: center; color: #6b7280; padding: 1rem;">
+    <div style="text-align: center; color: #6b7280; padding: 1.5rem;">
         <p><strong>Advanced Water Resources Engineering</strong> | Frequency Analysis Learning Path</p>
         <p><em>Building engineering expertise through hands-on data analysis and theoretical understanding</em></p>
+        <br>
+        <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); 
+                     padding: 1rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
+            <p style="margin: 0; font-size: 0.9rem; color: #475569;">
+                <strong>🎓 Developed by TA Saurav Bhattarai</strong><br>
+                Advanced Water Resource Engineering Course<br>
+                <strong>Dr. Rocky Talchabhadel</strong> | <strong>Jackson State University</strong> | Fall 2025<br>
+                <span style="color: #0f766e;">🐍 Powered by Python & Streamlit</span>
+            </p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
