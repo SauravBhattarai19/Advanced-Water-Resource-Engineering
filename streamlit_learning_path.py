@@ -683,248 +683,135 @@ def main():
     
     elif selected_module == "3. Risk, Reliability & Return Periods":
         st.markdown('<div class="module-header">Module 3: Risk, Reliability & Return Periods</div>', unsafe_allow_html=True)
-        
+
+        # Efficient summary table and quick reference
         st.markdown('<div class="theory-section">', unsafe_allow_html=True)
         st.markdown("""
-        ### Learning Objectives
-        - Define and calculate return periods
-        - Understand risk vs reliability concepts
-        - Apply lifetime risk calculations
-        - Connect concepts to engineering design standards
-        
-        ### Key Definitions
-        
-        **Return Period (T):**
-        - Average time interval between events of given magnitude or greater
-        - T = 1/P, where P is annual exceedance probability
-        - Units: years
-        
-        **Risk (R):**
-        - Probability that design event will be exceeded during structure's lifetime
-        - R = 1 - (1-P)^n, where n = design life in years
-        
-        **Reliability (Rel):**
-        - Probability that design will NOT be exceeded during lifetime
-        - Rel = (1-P)^n = 1 - R
-        """)
+        <div style='display: flex; flex-wrap: wrap; gap: 1.5rem;'>
+        <div style='flex: 1; min-width: 220px;'>
+        <strong>Definitions</strong><br>
+        <ul style='margin:0; padding-left:1.2em;'>
+        <li><b>Return Period (T):</b> Avg. years between events. <br><code>T = 1/P</code></li>
+        <li><b>Risk (R):</b> Probability event is exceeded in n years. <br><code>R = 1 - (1-P)<sup>n</sup></code></li>
+        <li><b>Reliability (Rel):</b> Probability event is <i>not</i> exceeded. <br><code>Rel = (1-P)<sup>n</sup></code></li>
+        </ul>
+        </div>
+        <div style='flex: 1; min-width: 220px;'>
+        <strong>Quick Reference</strong><br>
+        <ul style='margin:0; padding-left:1.2em;'>
+        <li>Annual Probability: <code>P = 1/T</code></li>
+        <li>Design Life: <code>n</code> (years)</li>
+        <li>Low Risk: <10%</li>
+        <li>High Risk: >50%</li>
+        </ul>
+        </div>
+        <div style='flex: 1; min-width: 220px;'>
+        <strong>Common Pitfalls</strong><br>
+        <ul style='margin:0; padding-left:1.2em;'>
+        <li>Short records may <b>underestimate risk</b></li>
+        <li>Return period ≠ time until next event</li>
+        <li>Risk increases with design life</li>
+        </ul>
+        </div>
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Interactive calculations
-        st.markdown("### 🧮 Interactive Risk-Reliability Calculator")
-        
-        col1, col2, col3 = st.columns(3)
-        
+
+        # Interactive calculator and plots
+        st.markdown("### 🧮 Risk & Reliability Calculator")
+        col1, col2 = st.columns([1,2])
         with col1:
-            st.markdown("#### Design Parameters")
-            design_return_period = st.selectbox(
-                "Design return period:",
-                [2, 5, 10, 25, 50, 100, 200, 500, 1000],
-                index=4
-            )
-            
-            design_life = st.slider("Structure design life (years):", 1, 100, 50)
-            
-            annual_prob = 1 / design_return_period
-            lifetime_risk = 1 - (1 - annual_prob) ** design_life
-            reliability = 1 - lifetime_risk
-            
+            design_return_period = st.selectbox("Design return period:",[2,5,10,25,50,100,200,500,1000],index=4)
+            design_life = st.slider("Design life (years):", 1, 100, 50)
+            annual_prob = 1/design_return_period
+            lifetime_risk = 1-(1-annual_prob)**design_life
+            reliability = (1-annual_prob)**design_life
             st.markdown('<div class="key-concept">', unsafe_allow_html=True)
             st.markdown(f"""
-            ### Calculated Values:
-            - **Annual Probability**: {annual_prob:.4f}
-            - **{design_life}-Year Risk**: {lifetime_risk:.3f} ({lifetime_risk*100:.1f}%)
-            - **Reliability**: {reliability:.3f} ({reliability*100:.1f}%)
-            """)
+            <b>Annual Probability:</b> {annual_prob:.4f}<br>
+            <b>{design_life}-Year Risk:</b> {lifetime_risk:.3f} ({lifetime_risk*100:.1f}%)<br>
+            <b>Reliability:</b> {reliability:.3f} ({reliability*100:.1f}%)
+            """, unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
-        
+
         with col2:
-            st.markdown("#### Risk Analysis")
-            
-            # Risk vs design life plot
-            life_range = np.arange(1, 101)
-            risks = [1 - (1 - annual_prob) ** n for n in life_range]
-            
+            life_range = np.arange(1,101)
+            risks = 1-(1-annual_prob)**life_range
             fig = go.Figure()
-            fig.add_trace(go.Scatter(
-                x=life_range,
-                y=risks,
-                mode='lines',
-                name=f'{design_return_period}-Year Design',
-                line=dict(color='#dc2626', width=3)
-            ))
-            
-            # Add current design point
-            fig.add_scatter(
-                x=[design_life],
-                y=[lifetime_risk],
-                mode='markers',
-                name='Current Design',
-                marker=dict(size=12, color='blue', symbol='star')
-            )
-            
-            # Add risk tolerance lines
-            for risk_level, label in [(0.1, '10%'), (0.2, '20%'), (0.5, '50%')]:
-                fig.add_hline(
-                    y=risk_level,
-                    line_dash="dash",
-                    line_color="gray",
-                    annotation_text=f"{label} Risk"
-                )
-            
-            fig.update_layout(
-                title=f'Lifetime Risk vs Design Life\n({design_return_period}-Year Design Event)',
-                xaxis_title='Design Life (years)',
-                yaxis_title='Lifetime Risk',
-                height=400
-            )
+            fig.add_trace(go.Scatter(x=life_range, y=risks, mode='lines', name='Lifetime Risk', line=dict(color='#dc2626', width=3)))
+            fig.add_scatter(x=[design_life], y=[lifetime_risk], mode='markers', name='Current Design', marker=dict(size=12, color='blue', symbol='star'))
+            for risk_level,label in [(0.1,'10%'),(0.2,'20%'),(0.5,'50%')]:
+                fig.add_hline(y=risk_level, line_dash="dash", line_color="gray", annotation_text=f"{label} Risk")
+            fig.update_layout(title=f'Lifetime Risk vs Design Life ({design_return_period}-Year Event)',xaxis_title='Design Life (years)',yaxis_title='Lifetime Risk',height=350)
             fig = apply_theme(fig)
             st.plotly_chart(fig, use_container_width=True)
-        
-        with col3:
-            st.markdown("#### Engineering Standards")
-            
-            # Common design standards
-            standards = {
-                'Residential Areas': {'T': 10, 'acceptable_risk': 0.4},
-                'Commercial/Industrial': {'T': 25, 'acceptable_risk': 0.2},
-                'Critical Infrastructure': {'T': 100, 'acceptable_risk': 0.1},
-                'High-Risk Facilities': {'T': 500, 'acceptable_risk': 0.05}
-            }
-            
-            st.markdown("**Typical Design Standards:**")
-            for facility, params in standards.items():
-                T = params['T']
-                acceptable_risk = params['acceptable_risk']
-                annual_p = 1/T
-                risk_50 = 1 - (1 - annual_p) ** 50
-                
-                risk_status = "✅" if risk_50 <= acceptable_risk else "⚠️"
-                
-                st.markdown(f"""
-                **{facility}:**
-                - Design: {T}-year event
-                - 50-year risk: {risk_50:.2f}
-                - Status: {risk_status}
-                """)
-            
-            st.markdown('<div class="warning-note">', unsafe_allow_html=True)
-            st.markdown("""
-            ### Risk Interpretation:
-            
-            **Low Risk** (< 10%): Very safe design
-            **Moderate Risk** (10-20%): Acceptable for most applications
-            **High Risk** (> 50%): May require risk mitigation
-            
-            **Note**: Risk tolerance depends on:
-            - Consequences of failure
-            - Economic considerations
-            - Social/environmental impacts
-            """)
-            st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Return period comparison
-        st.markdown("### 📊 Return Period Comparison: Precipitation vs Floods")
-        
-        # Load both datasets
+
+        # Standards summary
+        st.markdown('<div class="excel-section">', unsafe_allow_html=True)
+        st.markdown("**Design Standards (50-year risk):**")
+        standards = {'Residential':(10,0.4),'Commercial':(25,0.2),'Critical Infra':(100,0.1),'High-Risk':(500,0.05)}
+        rows = []
+        for name,(T,acc_risk) in standards.items():
+            risk_50 = 1-(1-1/T)**50
+            status = "✅" if risk_50<=acc_risk else "⚠️"
+            rows.append(f"<tr><td>{name}</td><td>{T}</td><td>{risk_50:.2f}</td><td>{status}</td></tr>")
+        st.markdown(f"""
+        <table style='width:100%;font-size:0.95em;'>
+        <tr><th>Facility</th><th>Design T</th><th>50yr Risk</th><th>Status</th></tr>
+        {''.join(rows)}
+        </table>
+        """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Comparison plots
+        st.markdown("### 📊 Return Period Comparison")
         precip_df = load_precipitation_data()
         flood_df = load_flood_data()
-        
         col1, col2 = st.columns(2)
-        
         with col1:
-            # Precipitation analysis
             precip_data = precip_df['Annual_Max_Precip'].values
             sorted_precip, T_precip, _ = weibull_plotting_position(precip_data)
-            
             fig_precip = go.Figure()
-            fig_precip.add_trace(go.Scatter(
-                x=T_precip,
-                y=sorted_precip,
-                mode='markers+lines',
-                name='Precipitation Data',
-                marker=dict(size=8, color='#2563eb')
-            ))
-            
-            fig_precip.update_layout(
-                title='Precipitation Frequency Curve',
-                xaxis_title='Return Period (years)',
-                yaxis_title='Annual Max Precipitation (mm)',
-                xaxis_type='log',
-                xaxis=dict(
-                    tickmode='array',
-                    tickvals=[1, 2, 5, 10, 20, 50, 100],
-                    ticktext=['1', '2', '5', '10', '20', '50', '100']
-                ),
-                height=400
-            )
+            fig_precip.add_trace(go.Scatter(x=T_precip, y=sorted_precip, mode='markers+lines', name='Precipitation', marker=dict(size=8, color='#2563eb')))
+            fig_precip.update_layout(title='Precipitation Frequency Curve',xaxis_title='Return Period (years)',yaxis_title='Max Precipitation (mm)',xaxis_type='log',height=300)
             fig_precip = apply_theme(fig_precip)
             st.plotly_chart(fig_precip, use_container_width=True)
-        
         with col2:
-            # Flood analysis
             flood_data = flood_df['Peak_Flow'].values
             sorted_flood, T_flood, _ = weibull_plotting_position(flood_data)
-            
             fig_flood = go.Figure()
-            fig_flood.add_trace(go.Scatter(
-                x=T_flood,
-                y=sorted_flood,
-                mode='markers+lines',
-                name='Flood Data',
-                marker=dict(size=8, color='#dc2626')
-            ))
-            
-            fig_flood.update_layout(
-                title='Flood Frequency Curve',
-                xaxis_title='Return Period (years)',
-                yaxis_title='Peak Flow (m³/s)',
-                xaxis_type='log',
-                xaxis=dict(
-                    tickmode='array',
-                    tickvals=[1, 2, 5, 10, 20, 50, 100],
-                    ticktext=['1', '2', '5', '10', '20', '50', '100']
-                ),
-                height=400
-            )
+            fig_flood.add_trace(go.Scatter(x=T_flood, y=sorted_flood, mode='markers+lines', name='Flood', marker=dict(size=8, color='#dc2626')))
+            fig_flood.update_layout(title='Flood Frequency Curve',xaxis_title='Return Period (years)',yaxis_title='Peak Flow (m³/s)',xaxis_type='log',height=300)
             fig_flood = apply_theme(fig_flood)
             st.plotly_chart(fig_flood, use_container_width=True)
-        
-        # Comparison table
-        st.markdown("### 📋 Design Event Comparison")
-        
-        return_periods = [2, 5, 10, 25, 50, 100]
-        comparison_data = []
-        
+
+        # Compact comparison table
+        st.markdown("**Design Event Comparison**")
+        return_periods = [2,5,10,25,50,100]
+        rows = []
         for T in return_periods:
-            # Interpolate values
             precip_val = np.interp(T, T_precip[::-1], sorted_precip[::-1])
             flood_val = np.interp(T, T_flood[::-1], sorted_flood[::-1])
-            
             annual_risk = 1/T
-            risk_50 = 1 - (1 - annual_risk) ** 50
-            
-            comparison_data.append({
-                'Return Period': f'{T} years',
-                'Annual Probability': f'{annual_risk:.4f}',
-                '50-Year Risk': f'{risk_50:.3f}',
-                'Precipitation (mm)': f'{precip_val:.1f}',
-                'Flood (m³/s)': f'{flood_val:.0f}'
-            })
-        
-        comparison_df = pd.DataFrame(comparison_data)
-        st.dataframe(comparison_df, use_container_width=True)
-        
+            risk_50 = 1-(1-annual_risk)**50
+            rows.append(f"<tr><td>{T}</td><td>{annual_risk:.4f}</td><td>{risk_50:.3f}</td><td>{precip_val:.1f}</td><td>{flood_val:.0f}</td></tr>")
+        st.markdown(f"""
+        <table style='width:100%;font-size:0.95em;'>
+        <tr><th>T (yrs)</th><th>P</th><th>50yr Risk</th><th>Precip (mm)</th><th>Flood (m³/s)</th></tr>
+        {''.join(rows)}
+        </table>
+        """, unsafe_allow_html=True)
+
         # Quiz
         result = create_quiz_question(
             "A storm drain is designed for a 10-year storm with a 25-year design life. What is the risk that the design storm will be exceeded during the structure's lifetime?",
             ["10%", "36%", "25%", "40%"],
             1,
             {
-                "correct": "Correct! Risk = 1 - (1-P)^n = 1 - (1-0.1)^25 = 1 - 0.64 = 0.36 or 36%. This relatively high risk shows why safety factors are important.",
-                "incorrect": "Use the formula: Risk = 1 - (1-P)^n, where P = 1/10 = 0.1 and n = 25 years. Risk = 1 - (0.9)^25 = 0.36 or 36%."
+                "correct": "Correct! Risk = 1 - (1-P)^n = 1 - (1-0.1)^25 = 0.36 or 36%.",
+                "incorrect": "Use: Risk = 1 - (1-P)^n, P = 1/10 = 0.1, n = 25. Risk = 1 - (0.9)^25 = 0.36 or 36%."
             }
         )
-        
         if result == True:
             st.session_state.completed_modules.add("3. Risk, Reliability & Return Periods")
     
@@ -1053,7 +940,7 @@ def main():
             st.markdown('<div class="data-exploration">', unsafe_allow_html=True)
             
             # Calculate properties
-            total_area = np.trapz(pdf_values, x_range)
+            total_area = np.trapezoid(pdf_values, x_range)
             max_density = np.max(pdf_values)
             
             if dist_type == "Normal":
