@@ -3,10 +3,13 @@
 An interactive Streamlit application for teaching hydrology statistics and frequency analysis to water resources engineering students. This comprehensive learning platform provides a structured journey from basic data analysis to advanced probability theory and practical design applications.
 
 ## 🎓 Course Information
-- **Course**: Advanced Water Resources Engineering
+- **Course**: Advanced Water Resources Engineering  
+- **Instructor**: Dr. Rocky Talchabhadel
+- **Teaching Assistant**: Saurav Bhattarai
 - **Level**: Senior Undergraduate
+- **Institution**: Jackson State University
+- **Semester**: Fall 2025
 - **Focus**: Frequency Analysis in Water Resources Engineering
-- **Date**: August 2025
 
 ## ✨ Key Features
 
@@ -37,56 +40,18 @@ An interactive Streamlit application for teaching hydrology statistics and frequ
 
 ## 📋 Learning Modules
 
-### Module 1: Data Exploration & Weibull Analysis
-- Data loading and visualization
-- Statistical measures calculation
-- Weibull plotting position methods
-- Probability plotting concepts
-
-### Module 2: Understanding Probability Concepts
-- Probability theory fundamentals
-- Frequency vs. probability relationships
-- Exceedance probability calculations
-
-### Module 3: Risk, Reliability & Return Periods
-- Return period concepts
-- Risk assessment calculations
-- Engineering reliability analysis
-
-### Module 4: Probability Distribution Functions
-- Distribution types and applications
-- Parameter estimation methods
-- Goodness-of-fit testing
-
-### Module 5: CDF vs PDF - Key Differences
-- Cumulative distribution functions
-- Probability density functions
-- Practical applications in engineering
-
-### Module 6: Distribution Selection & Fitting
-- Automated distribution fitting
-- Statistical criteria for selection
-- Visual assessment techniques
-
-### Module 7: Distribution Shapes & Equations
-- Mathematical foundations
-- Distribution characteristics
-- Parameter interpretations
-
-### Module 8: Engineering Applications
-- Design flood calculations
-- Infrastructure design considerations
-- Real-world case studies
-
-### Module 9: Excel Workshop & Practice
-- Comprehensive Excel tutorials
-- Template-based exercises
-- Professional reporting techniques
-
-### Module 10: Comprehensive Design Project
-- Capstone project integration
-- End-to-end analysis workflow
-- Professional presentation methods
+| Module | Topic | Key Concepts |
+|--------|-------|--------------|
+| **1** | Data Exploration & Weibull Analysis | Data visualization, statistical measures, Weibull plotting positions |
+| **2** | Understanding Probability Concepts | Probability theory, frequency-probability relationships |
+| **3** | Risk, Reliability & Return Periods | Return period concepts, risk assessment, engineering reliability |
+| **4** | Probability Distribution Functions | Distribution types, parameter estimation, goodness-of-fit |
+| **5** | CDF vs PDF - Key Differences | Cumulative vs probability density functions |
+| **6** | Distribution Selection & Fitting | Automated fitting, statistical criteria, visual assessment |
+| **7** | Distribution Shapes & Equations | Mathematical foundations, parameter interpretations |
+| **8** | Engineering Applications | Design flood calculations, infrastructure design |
+| **9** | Excel Workshop & Practice | Comprehensive tutorials, template exercises |
+| **10** | Comprehensive Design Project | Capstone integration, end-to-end analysis |
 
 ## 🚀 Quick Start
 
@@ -121,7 +86,7 @@ An interactive Streamlit application for teaching hydrology statistics and frequ
 
 The application requires the following Python packages:
 
-```
+```txt
 streamlit>=1.28.0     # Main web framework
 plotly>=5.15.0        # Interactive visualizations
 pandas>=2.0.0         # Data manipulation
@@ -144,7 +109,16 @@ Students will learn to:
 - **Use Professional Tools**: Excel integration for industry-standard analysis
 - **Interpret Results**: Make informed engineering decisions based on statistical analysis
 
-## 📊 Data Features
+## 📊 Key Statistical Concepts Covered
+
+- **Descriptive Statistics**: Mean, median, standard deviation, skewness
+- **Probability Distributions**: Normal, Gumbel, Lognormal
+- **Parameter Estimation**: Method of moments
+- **Probability Functions**: PDF, CDF, inverse CDF
+- **Return Period Analysis**: Design flood calculation
+- **Risk Assessment**: Hydrologic risk over project lifetime
+
+## 📈 Data Features
 
 - **Synthetic Flood Data**: Realistic annual maximum discharge values
 - **Interactive Visualizations**: Dynamic plots with zoom, pan, and hover features
@@ -187,6 +161,22 @@ Students will learn to:
 streamlit run streamlit_learning_path.py --server.runOnSave true
 ```
 
+## 💻 Technology Stack
+
+- **Frontend**: Streamlit
+- **Visualizations**: Plotly
+- **Statistics**: SciPy, NumPy
+- **Data Handling**: Pandas
+- **Excel Integration**: openpyxl, xlsxwriter
+
+## 📝 Usage Tips
+
+- Use the sidebar navigation to move between sections
+- Complete sections in order for best learning experience
+- Try the interactive sliders and controls
+- Download data and Excel tutorial for practice
+- Answer embedded questions to track progress
+
 ## 📚 Course Integration
 
 This application is designed to complement traditional water resources engineering coursework by providing:
@@ -195,6 +185,14 @@ This application is designed to complement traditional water resources engineeri
 - **Theoretical Understanding**: Visual representation of statistical concepts
 - **Practical Skills**: Industry-standard analysis techniques
 - **Assessment Tools**: Built-in quizzes and progress tracking
+
+## 👩‍🏫 For Instructors
+
+This app can be used as:
+- **Lecture Support**: Interactive demonstrations during class
+- **Lab Exercise**: Hands-on statistical analysis assignments
+- **Homework Tool**: Students can explore concepts independently
+- **Assessment**: Built-in progress tracking and quiz results
 
 ## 🤝 Contributing
 
@@ -210,54 +208,13 @@ For questions or support regarding this educational tool, please open an issue i
 
 ---
 
+<div align="center">
+
 **Advanced Water Resources Engineering** | Frequency Analysis Learning Path  
 *Building engineering expertise through hands-on data analysis and theoretical understanding*
 
-Students will learn to:
-- Transform chaotic flood data into reliable design parameters
-- Select appropriate probability distributions for extreme events
-- Calculate return period floods using statistical methods
-- Assess project risk over design lifetime
-- Use both Python and Excel for hydrologic analysis
+**🎓 Jackson State University | Fall 2025**  
+**👨‍🏫 Dr. Rocky Talchabhadel | 👨‍💻 TA Saurav Bhattarai**  
+**🐍 Built with Python & Streamlit**
 
-## Key Statistical Concepts Covered
-
-- **Descriptive Statistics**: Mean, median, standard deviation, skewness
-- **Probability Distributions**: Normal, Gumbel, Lognormal
-- **Parameter Estimation**: Method of moments
-- **Probability Functions**: PDF, CDF, inverse CDF
-- **Return Period Analysis**: Design flood calculation
-- **Risk Assessment**: Hydrologic risk over project lifetime
-
-## Technology Stack
-
-- **Frontend**: Streamlit
-- **Visualizations**: Plotly
-- **Statistics**: SciPy, NumPy
-- **Data Handling**: Pandas
-
-## Usage Tips
-
-- Use the sidebar navigation to move between sections
-- Complete sections in order for best learning experience
-- Try the interactive sliders and controls
-- Download data and Excel tutorial for practice
-- Answer embedded questions to track progress
-
-## For Instructors
-
-This app can be used as:
-- **Lecture Support**: Interactive demonstrations
-- **Lab Exercise**: Hands-on statistical analysis
-- **Homework Tool**: Students can explore concepts independently
-- **Assessment**: Built-in progress tracking
-
-## Support
-
-For questions or issues, please contact the course instructor.
-
----
-*Advanced Water Resources Engineering • Jackson State University*
-#   A d v a n c e d - W a t e r - R e s o u r c e - E n g i n e e r i n g 
- 
- 
+</div>
