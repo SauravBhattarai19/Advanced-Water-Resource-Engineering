@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydrology Statistics: From Raw Data to Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.6/jstat.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .slide { min-height: 100vh; scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; border-bottom: 1px solid #e5e7eb; }
+        .container-snap { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; }
+        .axis path, .axis line { fill: none; stroke: #333; shape-rendering: crispEdges; }
+        .axis text { font-size: 12px; }
+        .grid line { stroke: lightgrey; stroke-opacity: 0.7; shape-rendering: crispEdges; }
+        .grid path { stroke-width: 0; }
+        .focus-line { stroke: #dc2626; stroke-width: 1.5px; stroke-dasharray: 4,4; }
+        .bar { fill: #60a5fa; stroke: #1e40af; stroke-width: 1px; }
+        .quiz-option { cursor: pointer; transition: all 0.3s ease; }
+        .quiz-option:hover { transform: translateY(-2px); }
+        .quiz-correct { background-color: #d1fae5 !important; border-color: #10b981 !important; }
+        .quiz-incorrect { background-color: #fee2e2 !important; border-color: #ef4444 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div class="container-snap">
+
+    <!-- Slide 1: Title -->
+    <section class="slide bg-slate-900 text-white text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-4">Statistics for Water Resources</h1>
+        <p class="text-xl md:text-2xl mb-8 text-slate-300">A Step-by-Step Guide: From Raw Data to Engineering Design</p>
+        <p class="text-lg mb-12">This presentation shows the *entire process* of how hydrologists use statistics to make sense of random data and design critical infrastructure.</p>
+        <a href="#slide2" class="bg-white text-slate-900 font-bold py-3 px-6 rounded-lg text-lg hover:bg-slate-200 transition duration-300">Start the Process &rarr;</a>
+    </section>
+
+    <!-- Slide 2: The Core Problem -->
+    <section id="slide2" class="slide bg-white">
+        <div class="text-center max-w-4xl">
+            <h2 class="text-4xl font-bold text-slate-800 mb-4">The Engineer's Dilemma: Making Sense of Chaos</h2>
+            <p class="text-xl mb-6">Imagine you are tasked with designing a bridge. You need to know how high to build it so it won't be washed away by a flood. You look at the historical river flow data, and you see this:</p>
+            <p class="text-lg bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-r-lg">Some years have low flow, some have high flow. There's no obvious pattern. The data looks **random**. How can you confidently predict the size of a future flood from this chaotic record?</p>
+            <p class="mt-6 text-xl">The answer: **Statistics**. It's the tool we use to find the pattern hidden within the randomness.</p>
+        </div>
+    </section>
+
+    <!-- Quiz 1: Understanding the Problem -->
+    <section class="slide bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-3xl font-bold text-center mb-8">🤔 Quick Check: Understanding the Problem</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="text-xl mb-6">Why can't we just use the maximum flow from our 40-year record as our design flood?</p>
+                <div id="quiz1" class="space-y-3">
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        A) Because the data is too old and unreliable
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        B) Because we need exactly 50 years of data, not 40
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="true">
+                        C) Because an even larger flood could occur in the future - we need to estimate floods rarer than those in our record
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        D) Because the maximum value is always an outlier that should be ignored
+                    </div>
+                </div>
+                <div id="quiz1-feedback" class="mt-4 p-4 rounded-lg hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: The Raw Data -->
+    <section id="slide3" class="slide bg-gray-100">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-4xl font-bold text-slate-800 mb-6 text-center">Our Raw Material: A 50-Year Flow Record</h2>
+            <p class="text-lg mb-6 text-center">This is our starting point: a 50-year record of the highest streamflow measured each year (the Annual Peak Flow) for the Blackwater River. This is real-world-like data we must analyze.</p>
+            <div id="data-table-container" class="h-96 overflow-y-auto bg-white p-4 rounded-lg shadow-inner">
+                <!-- Data table will be injected here by D3 -->
+            </div>
+            <p class="text-sm text-center mt-4 text-gray-600">Notice the variability - some years are very low (drought conditions), others are extremely high (major floods). This randomness is exactly what makes statistical analysis necessary.</p>
+        </div>
+    </section>
+
+    <!-- Slide 4: Descriptive Statistics -->
+    <section id="slide4" class="slide bg-white">
+        <div class="max-w-5xl w-full">
+            <h2 class="text-4xl font-bold text-slate-800 mb-6 text-center">First Step: Describe the Data</h2>
+            <p class="text-lg mb-8 text-center">Before we do any complex modeling, let's calculate some basic numbers to understand our dataset's characteristics.</p>
+            <div id="desc-stats" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <!-- Descriptive stats will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz 2: Interpreting Statistics -->
+    <section class="slide bg-gradient-to-br from-green-50 to-emerald-100">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-3xl font-bold text-center mb-8">🧮 Quick Check: Interpreting Statistics</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="text-xl mb-6">Look at the skewness value from the descriptive statistics slide. What does a positive skewness tell us about flood data?</p>
+                <div id="quiz2" class="space-y-3">
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        A) The data is perfectly symmetrical around the mean
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="true">
+                        B) Most values are clustered at the low end, with a few very large values creating a "tail" to the right
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        C) The data has more large values than small values
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        D) There's an error in our calculations
+                    </div>
+                </div>
+                <div id="quiz2-feedback" class="mt-4 p-4 rounded-lg hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: Interactive Histogram -->
+    <section id="slide5" class="slide bg-gray-100">
+        <div class="max-w-6xl w-full">
+            <h2 class="text-4xl font-bold text-slate-800 mb-2 text-center">Visualizing Our Flood Data: The Histogram</h2>
+            <p class="text-lg mb-6 text-center">Now let's look specifically at our flood data. A histogram groups the data into "bins" to show us the data's shape and frequency.</p>
+            <div class="grid md:grid-cols-3 gap-6 items-center">
+                <div class="md:col-span-1 bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl font-bold mb-4">Histogram Controls</h3>
+                    <div>
+                        <label for="binsSlider" class="block font-medium mb-1">Number of Bins: <span id="binsValue" class="font-bold text-blue-600">12</span></label>
+                        <input id="binsSlider" type="range" min="5" max="25" value="12" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <p class="text-xs text-gray-500 mt-1">Move the slider. Notice how the number of bins changes your perception of the data's shape. Too few bins hide details; too many create noise.</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                        <p class="text-sm font-semibold">What to Look For:</p>
+                        <ul class="text-xs mt-2 space-y-1">
+                            <li>• Right-skewed shape (like our distributions above)</li>
+                            <li>• Most data clustered at lower values</li>
+                            <li>• Long tail extending to higher values</li>
+                            <li>• Compare to Normal vs. Gumbel shapes!</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <div id="histogram-chart"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: Understanding PDF Concept -->
+    <section id="slide6" class="slide bg-white">
+        <div class="max-w-5xl w-full text-center">
+            <h2 class="text-4xl font-bold text-slate-800 mb-4">What is a Probability Density Function (PDF)?</h2>
+            <div class="grid md:grid-cols-2 gap-8 text-left mt-8">
+                <div class="bg-blue-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">📊 The Histogram's Limitation</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li>• Depends on bin size choice</li>
+                        <li>• Blocky and discontinuous</li>
+                        <li>• Can't find probability of exact values</li>
+                        <li>• **Can't extrapolate** beyond observed data</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">📈 The PDF Solution</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li>• Smooth, continuous mathematical curve</li>
+                        <li>• Models the "ideal" shape of the data</li>
+                        <li>• Can predict probabilities anywhere</li>
+                        <li>• **Allows extrapolation** to rare events</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+                <p class="text-lg font-semibold">Key Concept: PDF Height = Probability Density</p>
+                <p class="text-base mt-2">A PDF doesn't give probabilities directly. Instead, the **area under the curve** between any two points gives the probability that a value falls in that range.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW Slide 6b: Normal Distribution -->
+    <section id="slide6b" class="slide bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="max-w-5xl w-full">
+            <h2 class="text-4xl font-bold text-center mb-6 text-slate-800">The Normal Distribution: Nature's Bell Curve</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div id="normal-chart"></div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="text-xl font-bold mb-3">📊 Key Characteristics</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li>• **Perfectly symmetrical** bell shape</li>
+                            <li>• Mean = Median = Mode</li>
+                            <li>• Defined by just 2 parameters: μ (mean) and σ (std dev)</li>
+                            <li>• 68% of data within 1σ, 95% within 2σ</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 class="text-lg font-bold mb-2">✅ Works Great For:</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Human heights, weights</li>
+                            <li>• Test scores (with enough data)</li>
+                            <li>• Measurement errors</li>
+                            <li>• Sum of many random effects</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                        <h3 class="text-lg font-bold mb-2">❌ Poor Choice For:</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Data that can't be negative (incomes, sizes)</li>
+                            <li>• Skewed data (most values on one side)</li>
+                            <li>• **Extreme values (like flood peaks)**</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-white p-4 rounded-lg shadow">
+                <h3 class="text-lg font-bold mb-3">🧮 Example: Heights of Adult Men</h3>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">Parameters:</p>
+                        <p>Mean (μ) = 175 cm</p>
+                        <p>Std Dev (σ) = 10 cm</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">At μ (175 cm):</p>
+                        <p>PDF = 0.0399</p>
+                        <p>(highest point on curve)</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">P(165 < height < 185):</p>
+                        <p>≈ 68% (within 1σ)</p>
+                        <p>Area under curve</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW Slide 6c: Gumbel Distribution -->
+    <section id="slide6c" class="slide bg-gradient-to-br from-green-50 to-emerald-100">
+        <div class="max-w-5xl w-full">
+            <h2 class="text-4xl font-bold text-center mb-6 text-slate-800">The Gumbel Distribution: Built for Extremes</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div id="gumbel-chart"></div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="text-xl font-bold mb-3">📊 Key Characteristics</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li>• **Right-skewed** (tail extends right)</li>
+                            <li>• Part of Extreme Value Theory</li>
+                            <li>• Parameters: μ (location) and β (scale)</li>
+                            <li>• Mode is to the left of mean</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 class="text-lg font-bold mb-2">✅ Perfect For:</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Annual maximum temperatures</li>
+                            <li>• **Annual peak floods**</li>
+                            <li>• Highest wind speeds per year</li>
+                            <li>• Any "maximum of many values"</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h3 class="text-lg font-bold mb-2">🎯 Why It Works:</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Mathematically derived for extremes</li>
+                            <li>• Has natural right skew</li>
+                            <li>• Gives proper weight to rare, large events</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-white p-4 rounded-lg shadow">
+                <h3 class="text-lg font-bold mb-3">🧮 Example: Annual Maximum Daily Temperature</h3>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">Parameters:</p>
+                        <p>Location (μ) = 35°C</p>
+                        <p>Scale (β) = 3°C</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">At mode (33.3°C):</p>
+                        <p>PDF = 0.123</p>
+                        <p>(most likely extreme temp)</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">P(temp > 40°C):</p>
+                        <p>≈ 5% chance each year</p>
+                        <p>Right tail probability</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW Slide 6d: Log-Normal Distribution -->
+    <section id="slide6d" class="slide bg-gradient-to-br from-purple-50 to-violet-100">
+        <div class="max-w-5xl w-full">
+            <h2 class="text-4xl font-bold text-center mb-6 text-slate-800">The Log-Normal Distribution: When Growth Multiplies</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div id="lognormal-chart"></div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h3 class="text-xl font-bold mb-3">📊 Key Characteristics</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li>• **Right-skewed**, can only be positive</li>
+                            <li>• If log(X) is Normal, then X is Log-Normal</li>
+                            <li>• Parameters: μ and σ of the logarithm</li>
+                            <li>• Long right tail, short left tail</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 class="text-lg font-bold mb-2">✅ Great For:</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Personal incomes</li>
+                            <li>• City population sizes</li>
+                            <li>• Stock prices</li>
+                            <li>• **Some flood data (related to LP3)**</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h3 class="text-lg font-bold mb-2">🎯 The Key Insight:</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Results from multiplicative processes</li>
+                            <li>• Many small % changes compound</li>
+                            <li>• Natural for positive-only quantities</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-white p-4 rounded-lg shadow">
+                <h3 class="text-lg font-bold mb-3">🧮 Example: Annual Household Income</h3>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">Parameters:</p>
+                        <p>μ (log) = 10.8</p>
+                        <p>σ (log) = 0.5</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">Median income:</p>
+                        <p>$49,000 (e^10.8)</p>
+                        <p>(most typical value)</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="font-semibold">P(income > $100k):</p>
+                        <p>≈ 16% of households</p>
+                        <p>Right tail captures high earners</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+        <div class="max-w-5xl w-full text-center">
+            <h2 class="text-4xl font-bold text-slate-800 mb-4">What is a Probability Density Function (PDF)?</h2>
+            <div class="grid md:grid-cols-2 gap-8 text-left mt-8">
+                <div class="bg-blue-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">📊 The Histogram's Limitation</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li>• Depends on bin size choice</li>
+                        <li>• Blocky and discontinuous</li>
+                        <li>• Can't find probability of exact values</li>
+                        <li>• **Can't extrapolate** beyond observed data</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">📈 The PDF Solution</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li>• Smooth, continuous mathematical curve</li>
+                        <li>• Models the "ideal" shape of the data</li>
+                        <li>• Can predict probabilities anywhere</li>
+                        <li>• **Allows extrapolation** to rare events</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+                <p class="text-lg font-semibold">Key Concept: PDF Height = Probability Density</p>
+                <p class="text-base mt-2">A PDF doesn't give probabilities directly. Instead, the **area under the curve** between any two points gives the probability that a value falls in that range.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: Interactive Fitting (FIXED) -->
+    <section id="slide7" class="slide bg-gray-100">
+        <div class="max-w-6xl w-full">
+            <h2 class="text-4xl font-bold text-slate-800 mb-2 text-center">Now Let's Fit These Distributions to Our Flood Data</h2>
+            <p class="text-lg mb-6 text-center">You've seen what Normal, Gumbel, and Log-Normal distributions look like in general. Now let's see which one fits our actual flood data best.</p>
+            <div class="grid md:grid-cols-3 gap-6 items-center">
+                <div class="md:col-span-1 bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl font-bold mb-4">Distribution Models</h3>
+                    <div id="dist-controls" class="space-y-2">
+                        <!-- Radio buttons will be injected here -->
+                    </div>
+                    <div id="dist-info" class="mt-4 p-3 bg-gray-50 rounded-lg text-sm">
+                        Select a distribution to see how well it fits our flood data.
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                        <p class="text-xs font-semibold">Visual Fit Assessment:</p>
+                        <p id="fit-quality" class="text-sm mt-1">How well does the curve match the histogram?</p>
+                    </div>
+                    <div class="mt-4 p-2 bg-yellow-50 rounded text-xs">
+                        <p><strong>Remember:</strong> The curve should follow the general shape of the histogram bars!</p>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <div id="fitting-chart"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz 3: Distribution Fitting -->
+    <section class="slide bg-gradient-to-br from-purple-50 to-violet-100">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-3xl font-bold text-center mb-8">📊 Quick Check: Distribution Fitting</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="text-xl mb-6">Based on what you observed in the fitting exercise, why is the Normal distribution usually inappropriate for flood frequency analysis?</p>
+                <div id="quiz3" class="space-y-3">
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        A) It's too complicated mathematically
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="true">
+                        B) It's symmetrical, but flood data is right-skewed, leading to underestimation of extreme events
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        C) It can't handle negative values
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        D) It's only used for small datasets
+                    </div>
+                </div>
+                <div id="quiz3-feedback" class="mt-4 p-4 rounded-lg hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Understanding CDF -->
+    <section id="slide8" class="slide bg-white">
+        <div class="max-w-5xl w-full text-center">
+            <h2 class="text-4xl font-bold text-slate-800 mb-4">From PDF to CDF: The Cumulative Distribution Function</h2>
+            <div class="grid md:grid-cols-2 gap-8 text-left mt-8">
+                <div class="bg-blue-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">📊 PDF (Probability Density Function)</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>What it shows:</strong> The "shape" of the distribution</li>
+                        <li><strong>Y-axis:</strong> Probability density (not probability!)</li>
+                        <li><strong>Usage:</strong> Area under curve = probability of range</li>
+                        <li><strong>Analogy:</strong> Like the speed at each moment of a car trip</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">📈 CDF (Cumulative Distribution Function)</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>What it shows:</strong> P(Flow ≤ x)</li>
+                        <li><strong>Y-axis:</strong> Actual probability (0 to 1)</li>
+                        <li><strong>Usage:</strong> Direct probability reading</li>
+                        <li><strong>Analogy:</strong> Like total distance traveled by a certain time</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+                <p class="text-lg font-semibold">For Engineering: We want the **Exceedance Probability**</p>
+                <p class="text-base mt-2">P(Flow > x) = 1 - CDF(x)</p>
+                <p class="text-base">This tells us the probability that flow **exceeds** a certain value - exactly what we need for design!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 9: Interactive CDF -->
+    <section id="slide9" class="slide bg-gray-100">
+         <div class="w-full max-w-6xl p-6 bg-white rounded-xl shadow-lg">
+             <h2 class="text-3xl font-bold text-center mb-4">Using Our Model: The CDF in Action</h2>
+             <div class="grid md:grid-cols-3 gap-6 items-center">
+                <div class="md:col-span-1">
+                    <h3 class="text-2xl font-bold mb-4">Find Design Flood</h3>
+                    <p class="text-sm mb-4">Select a return period. The chart shows the corresponding flood magnitude based on our fitted **Gumbel** distribution.</p>
+                    <div>
+                        <label for="returnPeriodSlider" class="block font-medium mb-1">Return Period (T): <span id="returnPeriodValue" class="font-bold text-blue-600">100</span> years</label>
+                        <input id="returnPeriodSlider" type="range" min="2" max="500" value="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div id="cdf-results" class="mt-6 p-4 bg-blue-50 rounded-lg text-center">
+                        <!-- Results will be injected here by D3 -->
+                    </div>
+                    <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
+                        <p class="text-xs"><strong>Remember:</strong> A "100-year flood" has a 1% chance each year. The return period is just 1/probability.</p>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <div id="cdf-chart"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz 4: CDF Understanding -->
+    <section class="slide bg-gradient-to-br from-orange-50 to-amber-100">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-3xl font-bold text-center mb-8">📈 Quick Check: CDF Understanding</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="text-xl mb-6">If the CDF shows that P(Flow ≤ 500 m³/s) = 0.90, what is the return period of a 500 m³/s flood?</p>
+                <div id="quiz4" class="space-y-3">
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        A) 90 years
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="true">
+                        B) 10 years (because exceedance probability = 0.10, so T = 1/0.10 = 10)
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        C) 0.9 years
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        D) Cannot be determined from this information
+                    </div>
+                </div>
+                <div id="quiz4-feedback" class="mt-4 p-4 rounded-lg hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: Risk -->
+    <section id="slide10" class="slide bg-slate-900 text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-4">Final Step: From Probability to Risk</h2>
+            <p class="text-xl mb-6 text-slate-300">A "100-year flood" has a 1% chance of happening *this year*. But what's the chance it will happen over the 50-year life of our bridge? This is the **Hydrologic Risk**.</p>
+            <div class="bg-white text-gray-800 p-6 rounded-lg shadow-xl">
+                <h3 class="text-2xl font-bold mb-4">Hydrologic Risk Calculator</h3>
+                <p class="text-sm mb-4">Risk is the probability that one or more events of a given magnitude will occur within a specified period.</p>
+                <p class="text-lg mb-4">$$ R = 1 - (1 - P)^n = 1 - (1 - \frac{1}{T})^n $$</p>
+                <div class="grid sm:grid-cols-2 gap-4 text-left">
+                    <div>
+                        <label for="riskT" class="block font-medium">Design Flood Return Period (T)</label>
+                        <input type="number" id="riskT" value="100" class="w-full p-2 border rounded mt-1">
+                    </div>
+                    <div>
+                        <label for="riskN" class="block font-medium">Project Design Life (n)</label>
+                        <input type="number" id="riskN" value="50" class="w-full p-2 border rounded mt-1">
+                    </div>
+                </div>
+                <div class="mt-6 text-center">
+                    <p class="text-lg">Risk of failure during the project's life:</p>
+                    <p id="riskResult" class="text-4xl font-bold text-red-600 mt-2">39.5%</p>
+                </div>
+                 <p class="text-xs mt-4 text-gray-500">Notice how a seemingly small 1% annual probability results in a very significant ~40% risk over a typical project lifetime!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Quiz: Synthesis -->
+    <section class="slide bg-gradient-to-br from-indigo-50 to-blue-100">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-3xl font-bold text-center mb-8">🎯 Final Challenge: Putting It All Together</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="text-xl mb-6">You're designing a culvert with a 25-year design life. You want no more than 20% risk of failure. What return period should you design for?</p>
+                <div id="quiz5" class="space-y-3">
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        A) 25 years (same as design life)
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        B) 50 years 
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="true">
+                        C) About 110 years (solve: 0.20 = 1-(1-1/T)^25 for T)
+                    </div>
+                    <div class="quiz-option p-4 bg-gray-50 border-2 border-gray-200 rounded-lg" data-answer="false">
+                        D) 5 years (20% = 1/5)
+                    </div>
+                </div>
+                <div id="quiz5-feedback" class="mt-4 p-4 rounded-lg hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Summary Slide -->
+    <section class="slide bg-gradient-to-br from-slate-800 to-slate-900 text-white text-center">
+        <div class="max-w-4xl">
+            <h2 class="text-4xl font-bold mb-8">🌊 The Complete Process: Data → Design</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                <div class="bg-white/10 p-4 rounded-lg">
+                    <div class="text-2xl mb-2">📊</div>
+                    <h3 class="font-bold">1. Collect Data</h3>
+                    <p>Historical flow records</p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-lg">
+                    <div class="text-2xl mb-2">📈</div>
+                    <h3 class="font-bold">2. Fit Distribution</h3>
+                    <p>Find the best PDF model</p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-lg">
+                    <div class="text-2xl mb-2">🎯</div>
+                    <h3 class="font-bold">3. Use CDF</h3>
+                    <p>Convert to design floods</p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-lg">
+                    <div class="text-2xl mb-2">⚠️</div>
+                    <h3 class="font-bold">4. Assess Risk</h3>
+                    <p>Account for project lifetime</p>
+                </div>
+            </div>
+            <p class="text-xl mt-8">You now understand how hydrologists transform chaotic data into reliable engineering design parameters!</p>
+        </div>
+    </section>
+
+</div>
+
+<script>
+// Wait for all libraries to load
+function checkLibrariesLoaded() {
+    return typeof d3 !== 'undefined' && typeof jStat !== 'undefined';
+}
+
+function initializeApp() {
+    if (!checkLibrariesLoaded()) {
+        console.log('Waiting for libraries to load...');
+        setTimeout(initializeApp, 100);
+        return;
+    }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Generate More Realistic Flood Data ---
+    // We'll create data that's more representative of actual flood records
+    const generateRealisticFloodData = () => {
+        const seed = 0.42; // For reproducibility
+        const random = d3.randomLcg(seed);
+        
+        // Base this on a Gumbel distribution (common for floods) with some noise
+        const mu_true = 250; // Location parameter
+        const beta_true = 80; // Scale parameter
+        
+        const data = [];
+        for (let i = 0; i < 50; i++) {
+            // Generate from Gumbel distribution
+            const u = random();
+            const gumbel_value = mu_true - beta_true * Math.log(-Math.log(u));
+            
+            // Add some measurement/natural noise (up to ±10%)
+            const noise_factor = 0.9 + 0.2 * random(); 
+            const final_value = Math.max(50, gumbel_value * noise_factor); // Minimum flow of 50
+            
+            data.push(final_value);
+        }
+        
+        // Sort data for some analyses
+        const sortedData = [...data].sort((a, b) => a - b);
+        
+        return { rawData: data, sortedData: sortedData };
+    };
+    
+    const { rawData: rawSampleData, sortedData: sortedSampleData } = generateRealisticFloodData();
+
+    // --- Helper Functions for Gumbel Distribution ---
+    const gumbelFunctions = {
+        pdf: function(x, mu, beta) {
+            const z = (x - mu) / beta;
+            return (1 / beta) * Math.exp(-(z + Math.exp(-z)));
+        },
+        cdf: function(x, mu, beta) {
+            const z = (x - mu) / beta;
+            return Math.exp(-Math.exp(-z));
+        },
+        inv: function(p, mu, beta) {
+            if (p <= 0 || p >= 1) return NaN;
+            return mu - beta * Math.log(-Math.log(p));
+        }
+    };
+
+    // --- Quiz Functionality ---
+    function setupQuiz(quizId, correctAnswer, explanations) {
+        const quiz = document.getElementById(quizId);
+        const feedback = document.getElementById(quizId + '-feedback');
+        
+        quiz.addEventListener('click', function(e) {
+            if (e.target.classList.contains('quiz-option')) {
+                const options = quiz.querySelectorAll('.quiz-option');
+                const isCorrect = e.target.dataset.answer === 'true';
+                
+                // Remove previous styling
+                options.forEach(opt => {
+                    opt.classList.remove('quiz-correct', 'quiz-incorrect');
+                });
+                
+                // Style the clicked option
+                if (isCorrect) {
+                    e.target.classList.add('quiz-correct');
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-green-100 border border-green-300';
+                    feedback.innerHTML = `<div class="flex items-center"><span class="text-green-600 mr-2">✓</span><span class="font-semibold">Correct!</span></div><p class="mt-2 text-sm">${explanations.correct}</p>`;
+                } else {
+                    e.target.classList.add('quiz-incorrect');
+                    // Also highlight the correct answer
+                    options.forEach(opt => {
+                        if (opt.dataset.answer === 'true') {
+                            opt.classList.add('quiz-correct');
+                        }
+                    });
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-red-100 border border-red-300';
+                    feedback.innerHTML = `<div class="flex items-center"><span class="text-red-600 mr-2">✗</span><span class="font-semibold">Not quite.</span></div><p class="mt-2 text-sm">${explanations.incorrect}</p>`;
+                }
+                
+                feedback.classList.remove('hidden');
+            }
+        });
+    }
+
+    // Setup all quizzes
+    setupQuiz('quiz1', 'C', {
+        correct: 'Exactly! We need to extrapolate beyond our historical record to estimate rarer events that might occur in the future. A 100-year flood may not have occurred in our 50-year record, but we still need to design for it.',
+        incorrect: 'The issue isn\'t data quality or length requirements. The key problem is that we need to estimate floods that are rarer than anything in our record - floods that might occur once every 100 or 500 years.'
+    });
+
+    setupQuiz('quiz2', 'B', {
+        correct: 'Perfect! Positive skew means the distribution has a long tail to the right. Most flood years are relatively modest, but occasional extreme events create this right tail - exactly what we see in nature.',
+        incorrect: 'Positive skew indicates asymmetry, not symmetry. It means most values are clustered toward the lower end, with a few very large values creating a "tail" extending toward higher values.'
+    });
+
+    setupQuiz('quiz3', 'B', {
+        correct: 'Excellent! The Normal distribution is symmetrical, but flood data is almost always right-skewed. Using a Normal distribution would underestimate the probability of extreme floods, leading to under-designed and potentially unsafe infrastructure.',
+        incorrect: 'The issue with Normal distribution for floods isn\'t complexity or data size - it\'s the fundamental shape mismatch. Normal distributions are symmetrical, but floods show right-skewed behavior.'
+    });
+
+    setupQuiz('quiz4', 'B', {
+        correct: 'Right! If P(Flow ≤ 500) = 0.90, then P(Flow > 500) = 1 - 0.90 = 0.10. The return period T = 1/P = 1/0.10 = 10 years.',
+        incorrect: 'Remember: Return period T = 1/P, where P is the exceedance probability. If CDF = 0.90, then exceedance probability = 1 - 0.90 = 0.10, so T = 10 years.'
+    });
+
+    setupQuiz('quiz5', 'C', {
+        correct: 'Excellent problem-solving! Using R = 1-(1-1/T)^n, with R=0.20 and n=25: 0.20 = 1-(1-1/T)^25. Solving gives T ≈ 110 years. This shows why design return periods are much larger than project lifetimes when we want low risk.',
+        incorrect: 'Remember the risk formula: R = 1-(1-1/T)^n. With 20% acceptable risk over 25 years, you need to solve for T. The answer is much larger than 25 years because even small annual probabilities compound over time.'
+    });
+
+    // --- 2. Populate Data Table (Slide 3) ---
+    const tableContainer = d3.select("#data-table-container");
+    const table = tableContainer.append("table").attr("class", "w-full text-sm");
+    const thead = table.append("thead").append("tr");
+    thead.append("th").attr("class", "p-2 text-left bg-gray-200 sticky top-0").text("Year");
+    thead.append("th").attr("class", "p-2 text-left bg-gray-200 sticky top-0").text("Peak Flow (m³/s)");
+    const tbody = table.append("tbody");
+    rawSampleData.forEach((d, i) => {
+        const row = tbody.append("tr").attr("class", "border-b hover:bg-gray-50");
+        row.append("td").attr("class", "p-2").text(1974 + i);
+        row.append("td").attr("class", "p-2 font-mono").text(d.toFixed(0));
+    });
+
+    // --- 3. Calculate and Display Descriptive Stats (Slide 4) ---
+    const mean = d3.mean(rawSampleData);
+    const median = d3.median(rawSampleData);
+    const stdDev = d3.deviation(rawSampleData);
+    const n = rawSampleData.length;
+    const skew = (n / ((n - 1) * (n - 2))) * d3.sum(rawSampleData, d => Math.pow((d - mean) / stdDev, 3));
+
+    const statsData = [
+        { label: "Mean (Average)", value: mean.toFixed(0) + " m³/s", desc: "The central tendency of the data." },
+        { label: "Median (Middle Value)", value: median.toFixed(0) + " m³/s", desc: "Less affected by extreme outliers than the mean." },
+        { label: "Standard Deviation", value: stdDev.toFixed(0) + " m³/s", desc: "Measures the spread or variability of the data." },
+        { label: "Skewness", value: skew.toFixed(2), desc: "Positive value indicates right tail (typical for floods)." }
+    ];
+
+    const statsContainer = d3.select("#desc-stats");
+    statsContainer.selectAll("div")
+        .data(statsData)
+        .enter()
+        .append("div")
+        .attr("class", "bg-blue-50 p-4 rounded-lg shadow")
+        .html(d => `<h3 class="text-lg font-bold text-blue-800">${d.label}</h3><p class="text-3xl font-light my-2">${d.value}</p><p class="text-xs text-gray-600">${d.desc}</p>`);
+
+    // --- 4. Interactive Histogram (Slide 5) ---
+    const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+    const width = 600 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svgHist = d3.select("#histogram-chart").append("svg")
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+        .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const xHist = d3.scaleLinear().domain(d3.extent(sortedSampleData)).range([0, width]);
+    const xAxisHist = svgHist.append("g").attr("transform", `translate(0,${height})`);
+    xAxisHist.append("text").attr("text-anchor", "middle").attr("x", width / 2).attr("y", 35).text("Peak Discharge (m³/s)").attr("fill", "black");
+
+    const yHist = d3.scaleLinear().range([height, 0]);
+    const yAxisHist = svgHist.append("g");
+
+    function updateHistogram(nBins) {
+        const histogram = d3.histogram().domain(xHist.domain()).thresholds(xHist.ticks(nBins));
+        const bins = histogram(rawSampleData);
+
+        yHist.domain([0, d3.max(bins, d => d.length)]);
+        yAxisHist.transition().duration(300).call(d3.axisLeft(yHist));
+        xAxisHist.transition().duration(300).call(d3.axisBottom(xHist));
+
+        const bars = svgHist.selectAll(".bar").data(bins);
+        bars.exit().remove();
+        bars.enter().append("rect").attr("class", "bar")
+            .merge(bars)
+            .transition().duration(300)
+            .attr("x", 1)
+            .attr("transform", d => `translate(${xHist(d.x0)}, ${yHist(d.length)})`)
+            .attr("width", d => Math.max(0, xHist(d.x1) - xHist(d.x0) - 1))
+            .attr("height", d => height - yHist(d.length));
+    }
+
+    const binsSlider = d3.select("#binsSlider");
+    binsSlider.on("input", function() {
+        const nBins = +this.value;
+        d3.select("#binsValue").text(nBins);
+        updateHistogram(nBins);
+    });
+    updateHistogram(+binsSlider.property("value"));
+
+    // --- NEW: Individual Distribution Charts ---
+    
+    // Helper function to create a standard distribution chart
+    function createDistributionChart(containerId, xDomain, yDomain, xLabel, title) {
+        const svg = d3.select(containerId).append("svg")
+            .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const x = d3.scaleLinear().domain(xDomain).range([0, width]);
+        const y = d3.scaleLinear().domain(yDomain).range([height, 0]);
+
+        // Axes
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y).tickFormat(d3.format(".3f")));
+        
+        // Labels
+        svg.append("text").attr("text-anchor", "middle").attr("x", width / 2).attr("y", height + 35).text(xLabel).attr("fill", "black");
+        svg.append("text").attr("text-anchor", "middle").attr("transform", "rotate(-90)").attr("y", -35).attr("x", -height / 2).text("Probability Density").attr("fill","black");
+        
+        return { svg, x, y };
+    }
+
+    // Normal Distribution Chart (Slide 6b)
+    const normalChart = createDistributionChart("#normal-chart", [145, 205], [0, 0.045], "Height (cm)", "Normal Distribution");
+    
+    const normalMean = 175;
+    const normalStd = 10;
+    
+    const normalData = normalChart.x.ticks(200).map(x => ({
+        x: x,
+        y: jStat.normal.pdf(x, normalMean, normalStd)
+    }));
+    
+    normalChart.svg.append("path")
+        .datum(normalData)
+        .attr("fill", "none")
+        .attr("stroke", "#3b82f6")
+        .attr("stroke-width", 3)
+        .attr("d", d3.line()
+            .x(d => normalChart.x(d.x))
+            .y(d => normalChart.y(d.y))
+        );
+    
+    // Add shaded area (1 standard deviation)
+    const normalShadeData = normalData.filter(d => d.x >= 165 && d.x <= 185);
+    normalChart.svg.append("path")
+        .datum(normalShadeData)
+        .attr("fill", "#3b82f6")
+        .attr("fill-opacity", 0.2)
+        .attr("d", d3.area()
+            .x(d => normalChart.x(d.x))
+            .y0(normalChart.y(0))
+            .y1(d => normalChart.y(d.y))
+        );
+        
+    // Add mean line
+    normalChart.svg.append("line")
+        .attr("x1", normalChart.x(175)).attr("x2", normalChart.x(175))
+        .attr("y1", 0).attr("y2", height)
+        .attr("stroke", "#dc2626").attr("stroke-width", 2).attr("stroke-dasharray", "4,4");
+        
+    normalChart.svg.append("text")
+        .attr("x", normalChart.x(175)).attr("y", 15)
+        .attr("text-anchor", "middle").attr("fill", "#dc2626")
+        .attr("font-size", "12px").text("Mean = 175");
+
+    // Gumbel Distribution Chart (Slide 6c)
+    const gumbelChart = createDistributionChart("#gumbel-chart", [25, 50], [0, 0.14], "Maximum Temperature (°C)", "Gumbel Distribution");
+    
+    const gumbelMu = 35;
+    const gumbelBeta = 3;
+    
+    const gumbelData = gumbelChart.x.ticks(200).map(x => ({
+        x: x,
+        y: gumbelFunctions.pdf(x, gumbelMu, gumbelBeta)
+    }));
+    
+    gumbelChart.svg.append("path")
+        .datum(gumbelData)
+        .attr("fill", "none")
+        .attr("stroke", "#22c55e")
+        .attr("stroke-width", 3)
+        .attr("d", d3.line()
+            .x(d => gumbelChart.x(d.x))
+            .y(d => gumbelChart.y(d.y))
+        );
+    
+    // Add shaded area (right tail > 40)
+    const gumbelShadeData = gumbelData.filter(d => d.x >= 40);
+    gumbelChart.svg.append("path")
+        .datum(gumbelShadeData)
+        .attr("fill", "#22c55e")
+        .attr("fill-opacity", 0.2)
+        .attr("d", d3.area()
+            .x(d => gumbelChart.x(d.x))
+            .y0(gumbelChart.y(0))
+            .y1(d => gumbelChart.y(d.y))
+        );
+        
+    // Add mode line (mu - beta * ln(ln(2)))
+    const gumbelMode = gumbelMu - gumbelBeta * Math.log(Math.log(2));
+    gumbelChart.svg.append("line")
+        .attr("x1", gumbelChart.x(gumbelMode)).attr("x2", gumbelChart.x(gumbelMode))
+        .attr("y1", 0).attr("y2", height)
+        .attr("stroke", "#dc2626").attr("stroke-width", 2).attr("stroke-dasharray", "4,4");
+        
+    gumbelChart.svg.append("text")
+        .attr("x", gumbelChart.x(gumbelMode)).attr("y", 15)
+        .attr("text-anchor", "middle").attr("fill", "#dc2626")
+        .attr("font-size", "12px").text("Mode = 33.3");
+
+    // Log-Normal Distribution Chart (Slide 6d)
+    const lognormalChart = createDistributionChart("#lognormal-chart", [0, 200000], [0, 0.000025], "Annual Income ($)", "Log-Normal Distribution");
+    
+    const lognormalMu = 10.8;  // log mean
+    const lognormalSigma = 0.5; // log std
+    
+    const lognormalData = lognormalChart.x.ticks(200).filter(x => x > 0).map(x => ({
+        x: x,
+        y: jStat.lognormal.pdf(x, lognormalMu, lognormalSigma)
+    }));
+    
+    lognormalChart.svg.append("path")
+        .datum(lognormalData)
+        .attr("fill", "none")
+        .attr("stroke", "#8b5cf6")
+        .attr("stroke-width", 3)
+        .attr("d", d3.line()
+            .x(d => lognormalChart.x(d.x))
+            .y(d => lognormalChart.y(d.y))
+        );
+    
+    // Add shaded area (> $100k)
+    const lognormalShadeData = lognormalData.filter(d => d.x >= 100000);
+    lognormalChart.svg.append("path")
+        .datum(lognormalShadeData)
+        .attr("fill", "#8b5cf6")
+        .attr("fill-opacity", 0.2)
+        .attr("d", d3.area()
+            .x(d => lognormalChart.x(d.x))
+            .y0(lognormalChart.y(0))
+            .y1(d => lognormalChart.y(d.y))
+        );
+        
+    // Add median line
+    const lognormalMedian = Math.exp(lognormalMu); // e^mu
+    lognormalChart.svg.append("line")
+        .attr("x1", lognormalChart.x(lognormalMedian)).attr("x2", lognormalChart.x(lognormalMedian))
+        .attr("y1", 0).attr("y2", height)
+        .attr("stroke", "#dc2626").attr("stroke-width", 2).attr("stroke-dasharray", "4,4");
+        
+    lognormalChart.svg.append("text")
+        .attr("x", lognormalChart.x(lognormalMedian)).attr("y", 15)
+        .attr("text-anchor", "middle").attr("fill", "#dc2626")
+        .attr("font-size", "12px").text("Median = $49k");
+
+    // --- 5. Interactive Fitting Chart (Slide 7) - COMPLETELY REWRITTEN ---
+    const svgFit = d3.select("#fitting-chart").append("svg")
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+        .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    
+    const xFit = d3.scaleLinear().domain([0, d3.max(sortedSampleData) * 1.3]).range([0, width]);
+    const yFit = d3.scaleLinear().range([height, 0]);
+
+    svgFit.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xFit));
+    const yAxisFit = svgFit.append("g");
+    svgFit.append("text").attr("text-anchor", "middle").attr("x", width / 2).attr("y", height + 35).text("Peak Discharge (m³/s)").attr("fill", "black");
+    svgFit.append("text").attr("text-anchor", "middle").attr("transform", "rotate(-90)").attr("y", -35).attr("x", -height/2).text("Probability Density").attr("fill","black");
+    
+    // Create histogram for fitting comparison
+    const histogramFit = d3.histogram().domain(xFit.domain()).thresholds(15);
+    const binsFit = histogramFit(rawSampleData);
+    const binWidth = binsFit.length > 0 ? (binsFit[0].x1 - binsFit[0].x0) : 1;
+    
+    // Calculate histogram density and set Y scale
+    const histDensity = binsFit.map(d => d.length / (n * binWidth));
+    const maxDensity = d3.max(histDensity);
+    yFit.domain([0, maxDensity * 1.3]);
+    yAxisFit.call(d3.axisLeft(yFit).tickFormat(d3.format(".4f")));
+
+    // Draw histogram bars
+    svgFit.selectAll("rect").data(binsFit).enter().append("rect")
+        .attr("class", "hist-bar")
+        .attr("x", d => xFit(d.x0) + 1)
+        .attr("width", d => Math.max(0, xFit(d.x1) - xFit(d.x0) - 2))
+        .attr("y", d => yFit(d.length / (n * binWidth)))
+        .attr("height", d => height - yFit(d.length / (n * binWidth)))
+        .style("fill", "#e3f2fd")
+        .style("stroke", "#1565c0")
+        .style("stroke-width", 1);
+
+    const fitLine = svgFit.append("path").attr("fill", "none").attr("stroke-width", 4);
+
+    // Simplified distributions with working parameters
+    const fitDists = {
+        normal: {
+            name: "Normal Distribution",
+            color: "#ef4444",
+            info: "Symmetrical bell curve - poor fit for right-skewed flood data",
+            pdf: x => jStat.normal.pdf(x, mean, stdDev),
+            quality: "Poor - doesn't capture skewness"
+        },
+        gumbel: {
+            name: "Gumbel Distribution", 
+            color: "#22c55e",
+            info: "Right-skewed extreme value distribution - designed for flood peaks",
+            mu_g: mean - 0.5772 * (stdDev * Math.sqrt(6) / Math.PI),
+            beta_g: stdDev * Math.sqrt(6) / Math.PI,
+            pdf: function(x) { return gumbelFunctions.pdf(x, this.mu_g, this.beta_g); },
+            quality: "Good - captures right skew"
+        },
+        gamma: {
+            name: "Gamma Distribution (similar to LP3)",
+            color: "#8b5cf6",
+            info: "Flexible right-skewed distribution - similar to Log-Pearson III",
+            alpha: Math.pow(mean, 2) / Math.pow(stdDev, 2),
+            beta: Math.pow(stdDev, 2) / mean,
+            pdf: function(x) { return x > 0 ? jStat.gamma.pdf(x, this.alpha, this.beta) : 0; },
+            quality: "Good - flexible shape"
+        }
+    };
+
+    const distControls = d3.select("#dist-controls");
+    Object.keys(fitDists).forEach((key, i) => {
+        distControls.append("label").attr("class", "flex items-center space-x-2 p-3 rounded hover:bg-gray-100 cursor-pointer border border-gray-200")
+            .html(`<input type="radio" name="dist" value="${key}" ${i===0 ? 'checked' : ''} class="mr-2"><span class="font-medium">${fitDists[key].name}</span>`);
+    });
+
+    function updateFit(distKey) {
+        const dist = fitDists[distKey];
+        
+        try {
+            // Generate PDF curve data
+            const lineData = xFit.ticks(150)
+                .map(x => ({ x: x, y: dist.pdf(x) }))
+                .filter(d => isFinite(d.y) && d.y >= 0 && d.y <= maxDensity * 2);
+
+            if (lineData.length > 0) {
+                fitLine.datum(lineData)
+                    .transition().duration(600)
+                    .attr("stroke", dist.color)
+                    .attr("d", d3.line()
+                        .x(d => xFit(d.x))
+                        .y(d => yFit(d.y))
+                        .curve(d3.curveMonotoneX)
+                    );
+            }
+            
+            d3.select("#dist-info").html(`
+                <p class="font-semibold mb-2">${dist.name}</p>
+                <p class="text-xs">${dist.info}</p>
+            `);
+            d3.select("#fit-quality").text(dist.quality);
+            
+        } catch (error) {
+            console.log("Error updating distribution:", error);
+            d3.select("#dist-info").text("Error loading this distribution");
+        }
+    }
+
+    d3.selectAll("input[name='dist']").on("change", function() {
+        updateFit(this.value);
+    });
+    
+    // Initialize with normal distribution
+    setTimeout(() => updateFit('normal'), 100);
+
+    // --- 6. Interactive CDF Chart (Slide 9) ---
+    const svgCdf = d3.select("#cdf-chart").append("svg")
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+        .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const xCdf = d3.scaleLinear().domain([0, d3.max(sortedSampleData) * 2]).range([0, width]);
+    const yCdf = d3.scaleLinear().domain([0, 1]).range([height, 0]);
+
+    svgCdf.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xCdf));
+    svgCdf.append("g").call(d3.axisLeft(yCdf));
+    svgCdf.append("text").attr("text-anchor", "middle").attr("x", width / 2).attr("y", height + 35).text("Peak Discharge (m³/s)").attr("fill", "black");
+    svgCdf.append("text").attr("text-anchor", "middle").attr("transform", "rotate(-90)").attr("y", -35).attr("x", -height / 2).text("Cumulative Probability").attr("fill","black");
+
+    // Draw CDF curve
+    const cdfLineData = xCdf.ticks(200).map(x => ({
+        x: x, 
+        y: gumbelFunctions.cdf(x, fitDists.gumbel.mu_g, fitDists.gumbel.beta_g)
+    }));
+    
+    svgCdf.append("path").datum(cdfLineData).attr("fill", "none").attr("stroke", "#22c55e").attr("stroke-width", 3)
+        .attr("d", d3.line().x(d => xCdf(d.x)).y(d => yCdf(d.y)));
+
+    // Add focus elements for interactivity
+    const focusGroup = svgCdf.append("g").style("display", "none");
+    const focusLineX = focusGroup.append("line").attr("class", "focus-line");
+    const focusLineY = focusGroup.append("line").attr("class", "focus-line");
+    const focusCircle = focusGroup.append("circle").attr("r", 6).attr("fill", "#166534");
+    
+    function updateCdfFocus(T) {
+        const P = 1 / T;
+        const cdfVal = 1 - P;
+        const discharge = gumbelFunctions.inv(cdfVal, fitDists.gumbel.mu_g, fitDists.gumbel.beta_g);
+        
+        if (discharge < xCdf.domain()[1] && discharge > xCdf.domain()[0] && isFinite(discharge)) {
+            focusGroup.style("display", null);
+            const cx = xCdf(discharge);
+            const cy = yCdf(cdfVal);
+            focusCircle.attr("cx", cx).attr("cy", cy);
+            focusLineX.attr("x1", cx).attr("y1", cy).attr("x2", cx).attr("y2", height);
+            focusLineY.attr("x1", 0).attr("y1", cy).attr("x2", cx).attr("y2", cy);
+        } else {
+            focusGroup.style("display", "none");
+        }
+        
+        d3.select("#cdf-results").html(`
+            <p class="text-sm mb-2">Annual Exceedance Probability:</p>
+            <p class="text-lg font-bold text-blue-700">${(P * 100).toFixed(2)}%</p>
+            <p class="text-sm mt-3 mb-2">Estimated ${T}-year Flood:</p>
+            <p class="text-xl font-bold text-red-600">${discharge.toFixed(0)} m³/s</p>
+        `);
+    }
+
+    const returnPeriodSlider = d3.select("#returnPeriodSlider");
+    returnPeriodSlider.on("input", function() {
+        const T = +this.value;
+        d3.select("#returnPeriodValue").text(T);
+        updateCdfFocus(T);
+    });
+    updateCdfFocus(+returnPeriodSlider.property("value"));
+
+    // --- 7. Risk Calculator ---
+    const riskT = document.getElementById('riskT');
+    const riskN = document.getElementById('riskN');
+    const riskResult = document.getElementById('riskResult');
+
+    function calculateRisk() {
+        const T = +riskT.value;
+        const n = +riskN.value;
+        if (T > 0 && n >= 0) {
+            const P = 1 / T;
+            const risk = 1 - Math.pow((1 - P), n);
+            riskResult.textContent = `${(risk * 100).toFixed(1)}%`;
+        } else {
+            riskResult.textContent = 'Invalid Input';
+        }
+    }
+    
+    riskT.addEventListener('input', calculateRisk);
+    riskN.addEventListener('input', calculateRisk);
+    calculateRisk();
+});
+}
+
+// Start the initialization
+initializeApp();
+</script>
+</body>
+</html>
