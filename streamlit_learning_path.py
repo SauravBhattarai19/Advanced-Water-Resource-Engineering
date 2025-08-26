@@ -432,7 +432,7 @@ def main():
             coeffs = np.polyfit(log_T, sorted_precip, 1)
             trend_T = np.logspace(0, 2, 100)  # 1 to 100 years on log scale
             trend_precip = coeffs[0] * np.log(trend_T) + coeffs[1]
-            
+
             fig.add_trace(go.Scatter(
                 x=trend_T,
                 y=trend_precip,
@@ -441,24 +441,6 @@ def main():
                 line=dict(color='#dc2626', dash='dash')
             ))
             
-            # Mark common design events
-            design_events = [2, 5, 10, 25, 50, 100]
-            for T in design_events:
-                if T <= max(return_periods):
-                    precip_est = np.interp(T, return_periods[::-1], sorted_precip[::-1])
-                else:
-                    precip_est = coeffs[0] * np.log(T) + coeffs[1]
-                
-                fig.add_annotation(
-                    x=T, y=precip_est,
-                    text=f"{T}yr",
-                    showarrow=True,
-                    arrowhead=2,
-                    arrowsize=1,
-                    arrowcolor="#059669",
-                    ax=0, ay=-30
-                )
-            
             fig.update_layout(
                 title='Precipitation Frequency Analysis (Weibull Method)',
                 xaxis_title='Return Period (years)',
@@ -466,8 +448,9 @@ def main():
                 xaxis_type='log',
                 xaxis=dict(
                     tickmode='array',
-                    tickvals=[1, 2, 5, 10, 20, 50, 100],
-                    ticktext=['1', '2', '5', '10', '20', '50', '100']
+                    tickvals=[1, 2, 5, 10, 20, 50, 100, 200, 500, 1000],
+                    ticktext=['1', '2', '5', '10', '20', '50', '100', '200', '500', '1000'],
+                    range=[0, 3]  # Limit X-axis to ~1000 (log10(1000) ≈ 3)
                 ),
                 height=500
             )
