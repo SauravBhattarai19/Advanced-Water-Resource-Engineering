@@ -384,64 +384,28 @@ class Module04_Distributions(LearningModule):
     def _slide_python_tutorial(self) -> Optional[bool]:
         """Slide 9: Python Tutorial"""
         with UIComponents.slide_container("interactive"):
-            st.markdown("## Complete Python Tutorial")
+            st.markdown("## Hands-On Python Tutorial")
             
             col1, col2 = UIComponents.two_column_layout()
             
             with col1:
-                st.markdown("### What You'll Learn")
-                UIComponents.highlight_box("""
-                **Complete Distribution Analysis:**
-                - Load and preprocess real data
-                - Fit multiple distributions
-                - Perform goodness-of-fit tests
-                - Calculate design values
-                - Create professional plots
-                """)
-                
-                features = [
-                    "Step-by-step Python code",
-                    "Real hydrologic datasets",
-                    "Multiple distribution types", 
-                    "Statistical testing methods",
-                    "Professional visualizations",
-                    "Engineering applications"
-                ]
-                
-                for feature in features:
-                    st.markdown(f"• {feature}")
-                
-            with col2:
-                UIComponents.big_number_display("Complete", "Tutorial")
-                UIComponents.big_number_display("Ready", "Data")
-                
+                st.markdown("### Complete Tutorial Notebook")
                 UIComponents.highlight_box("""
                 **Google Colab Tutorial**
                 
-                Complete hands-on Python notebook with code, explanations, and examples.
-                
-                [Open Google Colab Tutorial](https://colab.research.google.com/drive/1LkAEFUfspJRZKceOIW2StQ9UnhE_WVBE?usp=sharing)
+                [Open Python Notebook](https://colab.research.google.com/drive/1LkAEFUfspJRZKceOIW2StQ9UnhE_WVBE?usp=sharing)
                 """)
                 
+            with col2:
+                st.markdown("### Dataset")
                 UIComponents.highlight_box("""
-                **Hydrologic Dataset**
+                **Hydrologic Data**
                 
-                Excel file with real precipitation and flow data.
-                
-                [Download Data File](https://jsums-my.sharepoint.com/:x:/g/personal/j01013381_students_jsums_edu/ETVE3UpUxsFAoC_5TLVfnG0BDRlAwWYIPs-Epxs8dd4WvA?e=15qB4x)
+                [Download Excel File](https://jsums-my.sharepoint.com/:x:/g/personal/j01013381_students_jsums_edu/ETVE3UpUxsFAoC_5TLVfnG0BDRlAwWYIPs-Epxs8dd4WvA?e=15qB4x)
                 """)
             
-            st.markdown("### Quick Start Instructions")
-            instructions = [
-                "1. Click the Google Colab link above",
-                "2. Make a copy of the notebook",
-                "3. Download the data file",
-                "4. Upload data to Colab session",
-                "5. Run code cells step by step"
-            ]
-            
-            for instruction in instructions:
-                st.markdown(instruction)
+            st.markdown("---")
+            st.markdown("**Instructions:** Click the notebook link, make a copy, download the data, and follow the tutorial.")
         
         return None
     
