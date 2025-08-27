@@ -390,22 +390,26 @@ class Module04_Distributions(LearningModule):
             
             with col1:
                 st.markdown("### Complete Tutorial Notebook")
-                UIComponents.highlight_box("""
-                **Google Colab Tutorial**
                 
-                [Open Python Notebook](https://colab.research.google.com/drive/1LkAEFUfspJRZKceOIW2StQ9UnhE_WVBE?usp=sharing)
-                """)
+                # Clickable button for Colab
+                st.link_button(
+                    "🚀 Open Google Colab Tutorial",
+                    "https://colab.research.google.com/drive/1LkAEFUfspJRZKceOIW2StQ9UnhE_WVBE?usp=sharing",
+                    use_container_width=True
+                )
                 
             with col2:
                 st.markdown("### Dataset")
-                UIComponents.highlight_box("""
-                **Hydrologic Data**
                 
-                [Download Excel File](https://jsums-my.sharepoint.com/:x:/g/personal/j01013381_students_jsums_edu/ETVE3UpUxsFAoC_5TLVfnG0BDRlAwWYIPs-Epxs8dd4WvA?e=15qB4x)
-                """)
+                # Clickable button for data
+                st.link_button(
+                    "📊 Download Excel Data File",
+                    "https://jsums-my.sharepoint.com/:x:/g/personal/j01013381_students_jsums_edu/ETVE3UpUxsFAoC_5TLVfnG0BDRlAwWYIPs-Epxs8dd4WvA?e=15qB4x",
+                    use_container_width=True
+                )
             
             st.markdown("---")
-            st.markdown("**Instructions:** Click the notebook link, make a copy, download the data, and follow the tutorial.")
+            st.markdown("**Instructions:** Click the buttons above to access the tutorial and data directly in new browser tabs.")
         
         return None
     
