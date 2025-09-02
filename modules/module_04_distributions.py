@@ -394,7 +394,7 @@ class Module04_Distributions(LearningModule):
                 # Clickable button for Colab
                 st.link_button(
                     "🚀 Open Google Colab Tutorial",
-                    "https://colab.research.google.com/drive/1LkAEFUfspJRZKceOIW2StQ9UnhE_WVBE?usp=sharing",
+                    "https://colab.research.google.com/drive/1qXjyVHN8ldcP5v5cQb5cLSKFnSlpS03K?usp=sharing",
                     use_container_width=True
                 )
                 
@@ -404,7 +404,7 @@ class Module04_Distributions(LearningModule):
                 # Clickable button for data
                 st.link_button(
                     "📊 Download Excel Data File",
-                    "https://jsums-my.sharepoint.com/:x:/g/personal/j01013381_students_jsums_edu/ETVE3UpUxsFAoC_5TLVfnG0BDRlAwWYIPs-Epxs8dd4WvA?e=15qB4x",
+                    "https://drive.google.com/file/d/1JpDlUjcvif3RL-IKnjL3BYkPJI5x_FZp/view?usp=sharing",
                     use_container_width=True
                 )
             
