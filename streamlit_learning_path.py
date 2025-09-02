@@ -1,6 +1,6 @@
 """
 Water Resources Engineering: Frequency Analysis Learning Path
-Main Application Entry Point - Updated with GEV Analysis Module
+Main Application Entry Point - Updated with IDF Curve Analysis Module
 
 Author: TA Saurav Bhattarai
 Course: Advanced Water Resources Engineering  
@@ -32,6 +32,7 @@ try:
     from module_03_risk_analysis import Module03_RiskAnalysis
     from module_04_distributions import Module04_Distributions
     from module_05_gev_analysis import Module05_GEVAnalysis
+    from module_06_idf_curve import Module06_IDFCurve
 except ImportError as e:
     st.error(f"Module import error: {e}")
     st.info("Please ensure all module files are in the modules/ directory")
@@ -61,7 +62,8 @@ class LearningPathApp:
             Module02_Probability(),
             Module03_RiskAnalysis(), 
             Module04_Distributions(),
-            Module05_GEVAnalysis()  # New advanced GEV module
+            Module05_GEVAnalysis(),
+            Module06_IDFCurve()  # New IDF Curve module
         ]
     
     def _initialize_session_state(self):
@@ -78,7 +80,7 @@ class LearningPathApp:
         st.markdown("""
         <div class="main-header">
             <h1>Water Resources Frequency Analysis</h1>
-            <p>Complete Interactive Learning Path - All Modules Accessible</p>
+            <p>Complete Interactive Learning Path - All 6 Modules Accessible</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -135,9 +137,10 @@ class LearningPathApp:
                 st.markdown("**Advanced Applications:**")
                 advanced_objectives = [
                     "Understand GEV as flexible Gumbel distribution",
-                    "Apply shape parameter to control tail behavior",
-                    "Compare Gumbel vs GEV for design decisions",
-                    "Use appropriate distribution for project needs"
+                    "Apply shape parameter to control tail behavior", 
+                    "Create IDF curves from rainfall data",
+                    "Apply disaggregation ratios for short-duration analysis",
+                    "Use IDF curves for engineering design decisions"
                 ]
                 for obj in advanced_objectives:
                     st.markdown(f"• {obj}")
@@ -274,6 +277,8 @@ class LearningPathApp:
                     "Risk and reliability assessment",
                     "Distribution fitting and selection",
                     "GEV analysis and parameter estimation",
+                    "IDF curve development and application",
+                    "Excel proficiency for hydrologic analysis",
                     "Python programming for hydrology",
                     "Statistical model assessment"
                 ]
@@ -287,6 +292,8 @@ class LearningPathApp:
                     "Flood frequency analysis",
                     "Dam safety evaluation",
                     "Bridge and culvert design",
+                    "Storm drainage system sizing",
+                    "Urban runoff analysis",
                     "Risk-based decision making",
                     "Climate change adaptation",
                     "Insurance and catastrophe modeling",
@@ -299,6 +306,7 @@ class LearningPathApp:
             UIComponents.highlight_box("""
             **🚀 Next Steps:**
             - Apply these techniques to your capstone project
+            - Create IDF curves for your local area
             - Explore advanced topics: non-stationarity, climate change impacts
             - Consider graduate studies in water resources engineering
             - Join professional organizations (ASCE, AWRA)
