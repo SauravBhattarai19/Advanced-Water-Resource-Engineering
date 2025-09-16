@@ -69,8 +69,8 @@ class Module06_IDFCurve(LearningModule):
             "What are IDF Curves?",
             "I-D-F: Breaking it Down",
             "Intensity vs Depth",
-            "The Magic Ratios",
-            "Step-by-Step Calculations",
+            "NOAA Temporal Scaling Method",
+            "NOAA Process: Step-by-Step",
             "Frequency Analysis",
             "Creating IDF Curves",
             "Excel Workshop Prep",
@@ -334,211 +334,234 @@ class Module06_IDFCurve(LearningModule):
         return None
     
     def _slide_magic_ratios(self) -> Optional[bool]:
-        """Slide 4: The Magic Ratios - Disaggregation"""
+        """Slide 4: NOAA Temporal Scaling Method"""
         with UIComponents.slide_container("theory"):
-            st.markdown("## The Magic Ratios: Creating Short Duration Data")
-            
+            st.markdown("## NOAA's Solution: Temporal Scaling Method")
+
+            st.markdown("### 🎯 NOAA's Problem: Limited 5-Minute Data")
+
+            UIComponents.highlight_box("""
+            **NOAA Atlas 14 Volume 2 Challenge:**
+
+            📊 **Only 96 stations** had 5-minute precipitation data
+            📊 **994 stations** had hourly precipitation data
+            🎯 **Goal:** Provide 5-minute frequency estimates everywhere
+
+            **Solution:** Develop temporal scaling ratios to convert 1-hour data to sub-hourly estimates
+            """)
+
             col1, col2 = UIComponents.two_column_layout()
-            
+
             with col1:
-                st.markdown("### 🎯 The Problem")
-                UIComponents.highlight_box("""
-                **We have:** 30-minute rainfall data  
-                **We need:** 5, 10, 15-minute data for complete IDF curves
-                
-                **Solution:** Use empirical ratios from research studies
-                """)
-                
-                st.markdown("### 🔢 Standard Ratios (US Practice)")
-                
-                # Display the standard ratios
+                st.markdown("### 📋 NOAA Atlas 14 Temporal Ratios")
+
+                st.markdown("**🔗 Reference:** [NOAA Atlas 14 Volume 2](https://www.weather.gov/media/owp/hdsc_documents/Atlas14_Volume2.pdf)")
+
+                # Display the actual NOAA ratios
                 ratios_data = {
-                    'Duration': ['5 min', '10 min', '15 min', '30 min', '60 min', '120 min'],
-                    'Ratio': [0.29, 0.54, 0.70, 1.00, 0.81, 0.66],
-                    'Source': ['Research', 'Research', 'Research', 'Base Data', 'Calculated', 'Calculated']
+                    'Duration': ['5-minute', '10-minute', '15-minute', '30-minute', '60-minute', '120-minute'],
+                    'Technical Paper 40': [0.29, 0.45, 0.57, 0.79, 1.00, 1.20],
+                    'NOAA Northern': ['0.261-0.325', '0.386-0.481', '0.475-0.619', '0.712-0.819', '1.000', '1.15-1.25'],
+                    'NOAA Southern': ['0.214-0.293', '0.340-0.441', '0.423-0.585', '0.685-0.802', '1.000', '1.18-1.28']
                 }
-                
+
                 ratios_df = pd.DataFrame(ratios_data)
                 st.dataframe(ratios_df, use_container_width=True)
-                
-                UIComponents.formula_display("P_t = P_30min × Ratio_t", "Disaggregation Formula")
-                
+
+                UIComponents.formula_display("P_t = P_60min × Ratio_t", "NOAA Temporal Scaling Formula")
+
+                st.markdown("### 🧮 Example Calculation")
+                st.markdown("**For 1990 data (60-min maximum = 64mm):**")
+                st.markdown("• 5-minute: 64 × 0.29 = **18.6 mm**")
+                st.markdown("• 15-minute: 64 × 0.57 = **36.5 mm**")
+                st.markdown("• 30-minute: 64 × 0.79 = **50.6 mm**")
+                st.markdown("• 60-minute: 64 × 1.00 = **64.0 mm** (original)")
+
             with col2:
-                st.markdown("### 🧮 Live Calculator")
-                
-                # Interactive disaggregation calculator
-                base_30min = st.slider("30-min rainfall (mm):", 5, 60, 25, 1, key="disagg_base")
-                
-                st.markdown("**Calculated values:**")
-                
-                durations = [5, 10, 15, 30, 60, 120]
-                ratios = [0.29, 0.54, 0.70, 1.00, 0.81, 0.66]
-                
-                calc_data = []
+                st.markdown("### 🔬 The Scientific Method")
+
+                st.markdown("**Step 1: Regional Analysis**")
+                st.markdown("• Analyzed 96 stations with 5-minute data")
+                st.markdown("• Calculated ratios between sub-hourly and hourly maxima")
+                st.markdown("• Developed regional scaling factors")
+
+                st.markdown("**Step 2: Validation**")
+                st.markdown("• Tested ratios against independent data")
+                st.markdown("• Verified consistency across climate regions")
+                st.markdown("• Published in NOAA Atlas 14 Volume 2")
+
+                st.markdown("**Step 3: Implementation**")
+                st.markdown("• Apply ratios to ALL annual maximum 60-min data")
+                st.markdown("• Create annual maximum series for each duration")
+                st.markdown("• Use same statistical distribution for all durations")
+
+                # Interactive ratio calculator
+                st.markdown("### 🧪 Try the Ratios")
+                base_60min = st.slider("60-min annual maximum (mm):", 20, 100, 64, 1, key="noaa_calc")
+
+                st.markdown("**Using Technical Paper 40 ratios:**")
+                ratios = [0.29, 0.45, 0.57, 0.79, 1.00, 1.20]
+                durations = ['5-min', '10-min', '15-min', '30-min', '60-min', '120-min']
+
                 for dur, ratio in zip(durations, ratios):
-                    if dur <= 30:
-                        rainfall = base_30min * ratio
-                    else:
-                        rainfall = base_30min * ratio  # These are extension ratios
-                    
-                    intensity = (rainfall / dur) * 60
-                    calc_data.append({
-                        'Duration': f"{dur} min",
-                        'Rainfall (mm)': f"{rainfall:.1f}",
-                        'Intensity (mm/hr)': f"{intensity:.1f}"
-                    })
-                
-                calc_df = pd.DataFrame(calc_data)
-                st.dataframe(calc_df, use_container_width=True)
-                
-                # Visualization
+                    scaled_value = base_60min * ratio
+                    st.markdown(f"• **{dur}:** {scaled_value:.1f} mm")
+
+            st.markdown("### 🔑 Key Advantages of NOAA Method")
+
+            advantages = [
+                "**Scientifically based** - Derived from actual meteorological data analysis",
+                "**Regionally validated** - Different ratios for different climate regions",
+                "**Widely accepted** - Standard practice in US engineering",
+                "**Quality controlled** - Extensive peer review and validation",
+                "**Consistent approach** - Same methodology across entire United States"
+            ]
+
+            for advantage in advantages:
+                st.markdown(f"✅ {advantage}")
+
+        return None
+    
+    def _slide_step_calculations(self) -> Optional[bool]:
+        """Slide 5: NOAA Temporal Scaling Process - Step by Step"""
+        with UIComponents.slide_container("interactive"):
+            st.markdown("## NOAA Temporal Scaling Process: Complete Workflow")
+
+            st.markdown("### 📋 Phase 1: Data Preparation")
+
+            UIComponents.highlight_box("""
+            **Input Required:**
+            • 60-minute annual maximum precipitation data (multiple years)
+            • Minimum 20-30 years recommended for robust statistics
+            • Quality-controlled, homogeneous dataset
+            """)
+
+            col1, col2 = UIComponents.two_column_layout()
+
+            with col1:
+                st.markdown("### 📊 Our 60-minute Annual Maxima")
+
+                # Show sample of base data (converted to 60-min equivalent)
+                display_data = self.base_data.copy()
+                display_data['Rainfall_60min'] = display_data['Rainfall_30min'] * 1.3  # Convert 30min to 60min equivalent
+                display_data = display_data[['Year', 'Rainfall_60min']].head(10)
+
+                st.dataframe(display_data.round(1), use_container_width=True)
+                UIComponents.big_number_display(f"{len(self.base_data)}", "Years of Data")
+                UIComponents.big_number_display(f"{display_data['Rainfall_60min'].max():.1f}", "Max 60-min (mm)")
+
+            with col2:
+                # Histogram of 60-min data
+                rainfall_60min = self.base_data['Rainfall_30min'] * 1.3
+                fig = px.histogram(x=rainfall_60min, nbins=12,
+                                 title="60-min Annual Maximum Distribution")
+                fig.update_layout(height=250, xaxis_title="60-min Rainfall (mm)", yaxis_title="Frequency")
+                fig = PlotTools.apply_theme(fig)
+                st.plotly_chart(fig, use_container_width=True)
+
+            st.markdown("### 🔢 Phase 2: Temporal Scaling")
+
+            st.markdown("**Apply NOAA temporal ratios to each year's 60-minute maximum:**")
+
+            # NOAA temporal scaling ratios
+            durations = [5, 10, 15, 30, 60, 120]
+            noaa_ratios = [0.29, 0.45, 0.57, 0.79, 1.00, 1.20]
+
+            # Create example calculation table
+            sample_year = 1990
+            sample_60min = 64.0  # mm
+
+            scaling_example = []
+            for dur, ratio in zip(durations, noaa_ratios):
+                scaled_value = sample_60min * ratio
+                intensity = (scaled_value / dur) * 60
+                scaling_example.append({
+                    'Duration': f"{dur}-min",
+                    'NOAA Ratio': ratio,
+                    'Rainfall (mm)': f"{scaled_value:.1f}",
+                    'Intensity (mm/hr)': f"{intensity:.1f}"
+                })
+
+            scaling_df = pd.DataFrame(scaling_example)
+            st.dataframe(scaling_df, use_container_width=True)
+
+            st.markdown(f"**Example:** For {sample_year} (60-min maximum = {sample_60min} mm)")
+
+            st.markdown("### 📈 Phase 3: Statistical Analysis")
+
+            col1, col2 = UIComponents.two_column_layout()
+
+            with col1:
+                st.markdown("**🎯 Key Steps:**")
+                analysis_steps = [
+                    "**Fit Distribution to 60-min data** - Find best probability distribution (GEV, Log-Normal, etc.)",
+                    "**Parameter Estimation** - Calculate location, scale, shape parameters",
+                    "**Goodness-of-Fit Testing** - Validate distribution choice statistically",
+                    "**Apply Same Distribution** - Use identical distribution for all durations"
+                ]
+
+                for i, step in enumerate(analysis_steps, 1):
+                    st.markdown(f"{i}. {step}")
+
+                st.markdown("**🔑 NOAA Assumption:**")
+                UIComponents.highlight_box("""
+                **Same statistical distribution applies to all durations**
+
+                This allows scaling of entire annual maximum series rather than individual quantiles
+                """)
+
+            with col2:
+                st.markdown("**📊 Distribution Example:**")
+
+                # Generate sample data for visualization
+                np.random.seed(42)
+                sample_data = np.random.gamma(2.5, 15, 50)  # Sample 60-min data
+                sorted_sample = np.sort(sample_data)[::-1]
+
+                # Simple return period estimation
+                ranks = np.arange(1, len(sorted_sample) + 1)
+                return_periods = (len(sorted_sample) + 1) / ranks
+
                 fig = go.Figure()
-                
-                plot_durations = [d for d in durations]
-                plot_intensities = [float(row['Intensity (mm/hr)']) for row in calc_data]
-                
                 fig.add_trace(go.Scatter(
-                    x=plot_durations,
-                    y=plot_intensities,
-                    mode='lines+markers',
-                    name='Single Event',
-                    line=dict(width=3)
+                    x=return_periods[:15],  # Show top 15 events
+                    y=sorted_sample[:15],
+                    mode='markers',
+                    name='60-min Annual Maxima',
+                    marker=dict(size=8, color='blue')
                 ))
-                
+
                 fig.update_layout(
-                    title="Intensity-Duration for Single Event",
-                    xaxis_title="Duration (minutes)",
-                    yaxis_title="Intensity (mm/hr)",
+                    title="Frequency Analysis Example",
+                    xaxis_title="Return Period (years)",
+                    yaxis_title="60-min Rainfall (mm)",
                     height=300,
                     xaxis_type='log'
                 )
                 fig = PlotTools.apply_theme(fig)
                 st.plotly_chart(fig, use_container_width=True)
-            
-            st.markdown("### ⚠️ Important Notes")
+
+            st.markdown("### 🎯 Phase 4: Frequency Analysis & IDF Creation")
+
+            workflow_steps = [
+                "**Extract Quantiles:** Calculate precipitation depths for target return periods (2, 5, 10, 25, 50, 100 years)",
+                "**Build IDF Table:** Organize results in duration vs return period matrix",
+                "**Apply Scaling:** Use temporal ratios to convert 60-min quantiles to other durations",
+                "**Generate Curves:** Plot final intensity-duration-frequency relationships"
+            ]
+
+            for i, step in enumerate(workflow_steps, 1):
+                st.markdown(f"{i}. {step}")
+
             UIComponents.highlight_box("""
-            **These ratios are:**
-            - Based on meteorological research
-            - Vary slightly by geographic region
-            - Standard practice in engineering
-            - Used when detailed data isn't available
+            **🎓 Manual Implementation Strategy:**
+
+            1. Use our continuous hourly dataset to extract 60-min annual maxima
+            2. Apply NOAA temporal scaling ratios in Excel
+            3. Perform distribution fitting in Python/Colab
+            4. Extract design quantiles and build final IDF curves
             """)
-        
-        return None
-    
-    def _slide_step_calculations(self) -> Optional[bool]:
-        """Slide 5: Step-by-Step Calculations"""
-        with UIComponents.slide_container("interactive"):
-            st.markdown("## Complete IDF Calculation: Step by Step")
-            
-            st.markdown("### 📊 Our Base Data (30-minute annual maximums)")
-            
-            # Show sample of base data
-            display_data = self.base_data.head(10)
-            col1, col2 = UIComponents.two_column_layout()
-            
-            with col1:
-                st.dataframe(display_data, use_container_width=True)
-                UIComponents.big_number_display(f"{len(self.base_data)}", "Years of Data")
-                UIComponents.big_number_display(f"{self.base_data['Rainfall_30min'].max():.1f}", "Max (mm)")
-                
-            with col2:
-                # Histogram of base data
-                fig = px.histogram(self.base_data, x='Rainfall_30min', nbins=12,
-                                 title="30-min Annual Maximum Distribution")
-                fig.update_layout(height=250)
-                fig = PlotTools.apply_theme(fig)
-                st.plotly_chart(fig, use_container_width=True)
-            
-            st.markdown("### 🔢 Step 1: Apply Disaggregation Ratios")
-            
-            # Calculate all durations for all years
-            durations = [5, 10, 15, 30, 60, 120]
-            ratios = [0.29, 0.54, 0.70, 1.00, 0.81, 0.66]
-            
-            # Create complete dataset
-            complete_data = pd.DataFrame({'Year': self.base_data['Year']})
-            
-            for dur, ratio in zip(durations, ratios):
-                complete_data[f'Rain_{dur}min'] = self.base_data['Rainfall_30min'] * ratio
-                complete_data[f'Intensity_{dur}min'] = (complete_data[f'Rain_{dur}min'] / dur) * 60
-            
-            st.markdown("**Sample of calculated data:**")
-            sample_display = complete_data[['Year', 'Rain_5min', 'Rain_15min', 'Rain_30min', 'Rain_60min']].head(8)
-            st.dataframe(sample_display.round(1), use_container_width=True)
-            
-            st.markdown("### 📈 Step 2: Frequency Analysis for Each Duration")
-            
-            selected_duration = st.selectbox(
-                "Choose duration to analyze:",
-                [f"{d} minutes" for d in durations],
-                index=2
-            )
-            
-            dur_value = int(selected_duration.split()[0])
-            intensity_column = f'Intensity_{dur_value}min'
-            intensity_data = complete_data[intensity_column].values
-            
-            # Perform Weibull analysis
-            sorted_data, return_periods, plotting_positions = AnalysisTools.weibull_positions(intensity_data)
-            
-            col1, col2 = UIComponents.two_column_layout()
-            
-            with col1:
-                st.markdown(f"**Frequency Analysis for {selected_duration}:**")
-                
-                # Show top events
-                freq_results = pd.DataFrame({
-                    'Rank': range(1, min(8, len(sorted_data) + 1)),
-                    'Intensity (mm/hr)': sorted_data[:7].round(1),
-                    'Return Period (years)': return_periods[:7].round(1)
-                })
-                
-                st.dataframe(freq_results, use_container_width=True)
-                
-                # Design values
-                design_periods = [2, 5, 10, 25, 50]
-                st.markdown("**Design Intensities:**")
-                for T in design_periods:
-                    design_intensity = np.interp(T, return_periods[::-1], sorted_data[::-1])
-                    st.markdown(f"• **{T}-year:** {design_intensity:.1f} mm/hr")
-                    
-            with col2:
-                # Frequency plot
-                fig = go.Figure()
-                fig.add_trace(go.Scatter(
-                    x=return_periods,
-                    y=sorted_data,
-                    mode='markers',
-                    name='Data',
-                    marker=dict(size=8, color='blue')
-                ))
-                
-                # Add design event markers
-                for T in design_periods:
-                    design_val = np.interp(T, return_periods[::-1], sorted_data[::-1])
-                    fig.add_trace(go.Scatter(
-                        x=[T], y=[design_val],
-                        mode='markers+text',
-                        text=f'{T}yr',
-                        textposition='top center',
-                        marker=dict(size=10, color='red', symbol='star'),
-                        showlegend=False
-                    ))
-                
-                fig.update_layout(
-                    title=f"Frequency Analysis - {selected_duration}",
-                    xaxis_title="Return Period (years)",
-                    yaxis_title="Intensity (mm/hr)",
-                    height=350,
-                    xaxis_type='log'
-                )
-                fig = PlotTools.apply_theme(fig)
-                st.plotly_chart(fig, use_container_width=True)
-                
-            # Store complete dataset for next slides
-            st.session_state['idf_complete_data'] = complete_data
-        
+
         return None
     
     def _slide_frequency_analysis(self) -> Optional[bool]:
@@ -770,44 +793,46 @@ class Module06_IDFCurve(LearningModule):
     def _slide_excel_prep(self) -> Optional[bool]:
         """Slide 8: Excel Workshop Preparation"""
         with UIComponents.slide_container("theory"):
-            st.markdown("## Excel Workshop: Let's Build IDF Curves Together!")
+            st.markdown("## Manual Implementation: NOAA Temporal Scaling Method")
 
-            # Add prominent notice about data and Colab
+            # Add prominent notice about manual implementation
             UIComponents.highlight_box("""
-            **🎯 Workshop Resources Available:**
+            **🎯 Manual Implementation Approach:**
 
-            📊 **Real 60-minute rainfall data** for download in notebooks folder
-            🔗 **Google Colab notebook** for advanced distribution analysis
-            📋 **Excel templates** with formulas ready to use
+            📊 **Use our 75-year hourly dataset** to extract 60-minute annual maxima
+            🔧 **Apply NOAA temporal scaling ratios** in Excel for all durations
+            🔗 **Perform distribution fitting** in Python/Google Colab
+            📈 **Build professional IDF curves** following NOAA methodology
 
-            **Everything you need to create professional IDF curves!**
+            **Learn the complete process step-by-step!**
             """)
 
             col1, col2 = UIComponents.two_column_layout()
             
             with col1:
-                st.markdown("### 📋 Workshop Steps")
-                
+                st.markdown("### 📋 NOAA Implementation Steps")
+
                 workshop_steps = [
-                    "**Step 1:** Load 30-minute base data",
-                    "**Step 2:** Apply disaggregation ratios",
-                    "**Step 3:** Calculate intensities", 
-                    "**Step 4:** Perform frequency analysis",
-                    "**Step 5:** Create design intensity table",
-                    "**Step 6:** Plot IDF curves",
-                    "**Step 7:** Verify results"
+                    "**Step 1:** Extract 60-min annual maxima from hourly data",
+                    "**Step 2:** Apply NOAA temporal scaling ratios",
+                    "**Step 3:** Create annual maximum series for each duration",
+                    "**Step 4:** Fit probability distribution to 60-min data",
+                    "**Step 5:** Extract quantiles for design return periods",
+                    "**Step 6:** Apply same distribution to all durations",
+                    "**Step 7:** Build final IDF curves and tables"
                 ]
-                
+
                 for i, step in enumerate(workshop_steps, 1):
                     st.markdown(f"{step}")
-                
-                st.markdown("### 🧮 Key Formulas for Excel")
-                
-                UIComponents.formula_display("=B2*0.29", "5-min disaggregation")
-                UIComponents.formula_display("=(C2/5)*60", "5-min intensity")
-                UIComponents.formula_display("=RANK(B2,$B$2:$B$35,0)", "Weibull rank")
-                UIComponents.formula_display("=A2/(35+1)", "Plotting position")
-                UIComponents.formula_display("=1/D2", "Return period")
+
+                st.markdown("### 🧮 NOAA Temporal Scaling Formulas")
+
+                UIComponents.formula_display("=B2*0.29", "5-min scaling (Technical Paper 40)")
+                UIComponents.formula_display("=B2*0.57", "15-min scaling")
+                UIComponents.formula_display("=B2*0.79", "30-min scaling")
+                UIComponents.formula_display("=B2*1.20", "120-min scaling")
+
+                st.markdown("**📖 Reference:** [NOAA Atlas 14 Volume 2](https://www.weather.gov/media/owp/hdsc_documents/Atlas14_Volume2.pdf)")
                 
             with col2:
                 st.markdown("### 📊 Excel Template")
