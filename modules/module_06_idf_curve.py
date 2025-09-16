@@ -807,159 +807,57 @@ class Module06_IDFCurve(LearningModule):
             **Learn the complete process step-by-step!**
             """)
 
+            st.markdown("### 🎯 Now We'll Do It Ourselves!")
+
+            st.markdown("**Time to apply the NOAA Temporal Scaling Method manually using Excel and Python/Colab.**")
+
             col1, col2 = UIComponents.two_column_layout()
-            
+
             with col1:
-                st.markdown("### 📋 NOAA Implementation Steps")
+                st.markdown("**📊 Hourly Rainfall Data**")
 
-                workshop_steps = [
-                    "**Step 1:** Extract 60-min annual maxima from hourly data",
-                    "**Step 2:** Apply NOAA temporal scaling ratios",
-                    "**Step 3:** Create annual maximum series for each duration",
-                    "**Step 4:** Fit probability distribution to 60-min data",
-                    "**Step 5:** Extract quantiles for design return periods",
-                    "**Step 6:** Apply same distribution to all durations",
-                    "**Step 7:** Build final IDF curves and tables"
-                ]
-
-                for i, step in enumerate(workshop_steps, 1):
-                    st.markdown(f"{step}")
-
-                st.markdown("### 🧮 NOAA Temporal Scaling Formulas")
-
-                UIComponents.formula_display("=B2*0.29", "5-min scaling (Technical Paper 40)")
-                UIComponents.formula_display("=B2*0.45", "10-min scaling")
-                UIComponents.formula_display("=B2*0.57", "15-min scaling")
-                UIComponents.formula_display("=B2*0.79", "30-min scaling")
-
-                st.markdown("**📖 Reference:** [NOAA Atlas 14 Volume 2](https://www.weather.gov/media/owp/hdsc_documents/Atlas14_Volume2.pdf)")
-                
-            with col2:
-                st.markdown("### 📊 Excel Template")
-                
-                # Create sample template
-                template_data = {
-                    'Year': [1990, 1991, 1992, '...', 2023],
-                    '30min_Rain': [22.5, 18.3, 35.7, '...', 28.1],
-                    '5min_Rain': ['=B2*0.29', '=B3*0.29', '=B4*0.29', '...', '=B35*0.29'],
-                    '5min_Intensity': ['=(C2/5)*60', '=(C3/5)*60', '=(C4/5)*60', '...', '=(C35/5)*60']
-                }
-                
-                template_df = pd.DataFrame(template_data)
-                st.dataframe(template_df, use_container_width=True)
-                
-                st.markdown("### 📈 Expected Chart")
-                
-                # Show what the final chart should look like
-                durations = np.array([5, 10, 15, 30, 60, 120])
-                
-                # Sample curves for demonstration
-                intensities_2yr = np.array([75, 58, 48, 35, 23, 15])
-                intensities_10yr = intensities_2yr * 1.4
-                intensities_50yr = intensities_2yr * 1.8
-                
-                fig = go.Figure()
-                
-                for T, intensities, color in [(2, intensities_2yr, 'blue'), 
-                                            (10, intensities_10yr, 'orange'),
-                                            (50, intensities_50yr, 'red')]:
-                    fig.add_trace(go.Scatter(
-                        x=durations, y=intensities,
-                        mode='lines+markers',
-                        name=f'{T}-year',
-                        line=dict(width=3)
-                    ))
-                
-                fig.update_layout(
-                    title="Target IDF Curves",
-                    xaxis_title="Duration (minutes)",
-                    yaxis_title="Intensity (mm/hr)",
-                    height=300,
-                    xaxis_type='log'
-                )
-                fig = PlotTools.apply_theme(fig)
-                st.plotly_chart(fig, use_container_width=True)
-            
-            st.markdown("### 📥 Workshop Materials")
-            
-            col1, col2, col3 = UIComponents.three_column_layout()
-            
-            with col1:
-                st.markdown("**60-min Rainfall Data**")
-
-                # Check if idf.xlsx exists in notebooks folder
+                # Check if data files exist
                 import os
-                idf_file_path = "notebooks/idf.xlsx"
+                csv_file_path = "notebooks/rainfall_data_1950_2024.csv"
+                excel_file_path = "notebooks/idf.xlsx"
 
-                if os.path.exists(idf_file_path):
-                    with open(idf_file_path, "rb") as file:
+                if os.path.exists(csv_file_path):
+                    with open(csv_file_path, "rb") as file:
                         st.download_button(
-                            "📊 Download IDF Data (Excel)",
+                            "📄 Download Complete Hourly Data (CSV)",
                             file.read(),
-                            "idf.xlsx",
+                            "rainfall_data_1950_2024.csv",
+                            "text/csv",
+                            use_container_width=True
+                        )
+
+                if os.path.exists(excel_file_path):
+                    with open(excel_file_path, "rb") as file:
+                        st.download_button(
+                            "📊 Download Excel Sample Data",
+                            file.read(),
+                            "idf_sample_data.xlsx",
                             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                             use_container_width=True
                         )
-                    st.markdown("**📄 Contains:**")
-                    st.markdown("• 34 years of 60-min data")
-                    st.markdown("• Statistics summary")
-                    st.markdown("• Excel template")
-                    st.markdown("• Complete instructions")
-                else:
-                    st.error("IDF data file not found. Please check notebooks/idf.xlsx")
-                    
-            with col2:
-                st.markdown("**Distribution Analysis**")
-                UIComponents.highlight_box("""
-                **🔗 Google Colab Notebook**
 
-                Use this notebook to find the best-fit probability distribution for your rainfall data:
-                """)
+                st.markdown("**📋 Contains:**")
+                st.markdown("• 75 years of hourly rainfall data")
+                st.markdown("• Sample annual maxima")
+                st.markdown("• Excel templates with formulas")
+            
+            with col2:
+                st.markdown("**🔗 Google Colab for Distribution Analysis**")
 
                 st.markdown("**[📊 Open Distribution Analysis Colab](https://colab.research.google.com/drive/1t-Sz6p3xeyxV74efFzu6_gFsigLAkbHz?usp=sharing)**")
 
-                st.markdown("**📋 Steps:**")
-                st.markdown("1. Click the Colab link above")
-                st.markdown("2. Upload your downloaded data")
-                st.markdown("3. Run the analysis")
-                st.markdown("4. Get best distribution for IDF curves")
+                st.markdown("Use this notebook to:")
+                st.markdown("• Fit probability distributions to your data")
+                st.markdown("• Find the best distribution (GEV, Log-Normal, etc.)")
+                st.markdown("• Extract design quantiles for return periods")
 
-                st.markdown("**🎯 Benefits:**")
-                st.markdown("• Compare multiple distributions")
-                st.markdown("• Statistical goodness-of-fit tests")
-                st.markdown("• Professional IDF parameters")
-                    
-            with col3:
-                st.markdown("**Excel Template**")
-
-                UIComponents.highlight_box("""
-                **📋 Excel Formulas Guide**
-
-                **Disaggregation ratios:**
-                • 5-min: =B2*0.25
-                • 10-min: =B2*0.35
-                • 15-min: =B2*0.45
-                • 30-min: =B2*0.65
-                • 120-min: =B2*1.30
-
-                **Intensity calculations:**
-                • I = (P/Duration)*60
-                """)
-
-                st.markdown("**📈 Workflow:**")
-                st.markdown("1. Download 60-min data (left)")
-                st.markdown("2. Apply disaggregation formulas")
-                st.markdown("3. Calculate intensities")
-                st.markdown("4. Use Colab for distribution analysis")
-                st.markdown("5. Create final IDF curves")
-            
-            UIComponents.highlight_box("""
-            **🎯 Workshop Goals:**
-            - Understand every step of IDF curve creation
-            - Practice Excel formulas for hydrologic analysis
-            - Create professional IDF charts
-            - Apply to real engineering problems
-            """)
+            st.markdown("---")
+            st.markdown("### 🚀 Ready to implement the NOAA method manually!")
         
         return None
     
