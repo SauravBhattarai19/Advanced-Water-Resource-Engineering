@@ -357,12 +357,12 @@ class Module06_IDFCurve(LearningModule):
 
                 st.markdown("**🔗 Reference:** [NOAA Atlas 14 Volume 2](https://www.weather.gov/media/owp/hdsc_documents/Atlas14_Volume2.pdf)")
 
-                # Display the actual NOAA ratios
+                # Display the actual NOAA ratios (for sub-hourly durations only)
                 ratios_data = {
-                    'Duration': ['5-minute', '10-minute', '15-minute', '30-minute', '60-minute', '120-minute'],
-                    'Technical Paper 40': [0.29, 0.45, 0.57, 0.79, 1.00, 1.20],
-                    'NOAA Northern': ['0.261-0.325', '0.386-0.481', '0.475-0.619', '0.712-0.819', '1.000', '1.15-1.25'],
-                    'NOAA Southern': ['0.214-0.293', '0.340-0.441', '0.423-0.585', '0.685-0.802', '1.000', '1.18-1.28']
+                    'Duration': ['5-minute', '10-minute', '15-minute', '30-minute', '60-minute'],
+                    'Technical Paper 40': [0.29, 0.45, 0.57, 0.79, 1.00],
+                    'NOAA Northern': ['0.261-0.325', '0.386-0.481', '0.475-0.619', '0.712-0.819', '1.000'],
+                    'NOAA Southern': ['0.214-0.293', '0.340-0.441', '0.423-0.585', '0.685-0.802', '1.000']
                 }
 
                 ratios_df = pd.DataFrame(ratios_data)
@@ -400,8 +400,8 @@ class Module06_IDFCurve(LearningModule):
                 base_60min = st.slider("60-min annual maximum (mm):", 20, 100, 64, 1, key="noaa_calc")
 
                 st.markdown("**Using Technical Paper 40 ratios:**")
-                ratios = [0.29, 0.45, 0.57, 0.79, 1.00, 1.20]
-                durations = ['5-min', '10-min', '15-min', '30-min', '60-min', '120-min']
+                ratios = [0.29, 0.45, 0.57, 0.79, 1.00]
+                durations = ['5-min', '10-min', '15-min', '30-min', '60-min']
 
                 for dur, ratio in zip(durations, ratios):
                     scaled_value = base_60min * ratio
@@ -463,9 +463,9 @@ class Module06_IDFCurve(LearningModule):
 
             st.markdown("**Apply NOAA temporal ratios to each year's 60-minute maximum:**")
 
-            # NOAA temporal scaling ratios
-            durations = [5, 10, 15, 30, 60, 120]
-            noaa_ratios = [0.29, 0.45, 0.57, 0.79, 1.00, 1.20]
+            # NOAA temporal scaling ratios (sub-hourly only)
+            durations = [5, 10, 15, 30, 60]
+            noaa_ratios = [0.29, 0.45, 0.57, 0.79, 1.00]
 
             # Create example calculation table
             sample_year = 1990
@@ -828,9 +828,9 @@ class Module06_IDFCurve(LearningModule):
                 st.markdown("### 🧮 NOAA Temporal Scaling Formulas")
 
                 UIComponents.formula_display("=B2*0.29", "5-min scaling (Technical Paper 40)")
+                UIComponents.formula_display("=B2*0.45", "10-min scaling")
                 UIComponents.formula_display("=B2*0.57", "15-min scaling")
                 UIComponents.formula_display("=B2*0.79", "30-min scaling")
-                UIComponents.formula_display("=B2*1.20", "120-min scaling")
 
                 st.markdown("**📖 Reference:** [NOAA Atlas 14 Volume 2](https://www.weather.gov/media/owp/hdsc_documents/Atlas14_Volume2.pdf)")
                 
