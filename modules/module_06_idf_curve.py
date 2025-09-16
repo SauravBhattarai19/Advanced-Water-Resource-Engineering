@@ -14,7 +14,7 @@ import scipy.stats as stats
 from typing import List, Optional, Dict, Tuple
 
 from base_classes import LearningModule, ModuleInfo, LearningObjective, QuizEngine
-from utilities import DataManager, AnalysisTools, PlotTools, UIComponents, ExcelExporter
+from utilities import DataManager, AnalysisTools, PlotTools, UIComponents
 
 class Module06_IDFCurve(LearningModule):
     """Module 6: IDF Curve Analysis"""
@@ -588,35 +588,24 @@ class Module06_IDFCurve(LearningModule):
             with col1:
                 st.markdown("**📊 Hourly Rainfall Data**")
 
-                # Check if data files exist
+                # Check if data file exists
                 import os
                 csv_file_path = "notebooks/rainfall_data_1950_2024.csv"
-                excel_file_path = "notebooks/idf.xlsx"
 
                 if os.path.exists(csv_file_path):
                     with open(csv_file_path, "rb") as file:
                         st.download_button(
-                            "📄 Download Complete Hourly Data (CSV)",
+                            "📄 Download Hourly Rainfall Data (CSV)",
                             file.read(),
                             "rainfall_data_1950_2024.csv",
                             "text/csv",
                             use_container_width=True
                         )
 
-                if os.path.exists(excel_file_path):
-                    with open(excel_file_path, "rb") as file:
-                        st.download_button(
-                            "📊 Download Excel Sample Data",
-                            file.read(),
-                            "idf_sample_data.xlsx",
-                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                            use_container_width=True
-                        )
-
                 st.markdown("**📋 Contains:**")
-                st.markdown("• 75 years of hourly rainfall data")
-                st.markdown("• Sample annual maxima")
-                st.markdown("• Excel templates with formulas")
+                st.markdown("• 75 years of hourly rainfall data (1950-2024)")
+                st.markdown("• Columns: Year, Month, Day, Hour, Rainfall_mm")
+                st.markdown("• Ready for annual maxima extraction")
             
             with col2:
                 st.markdown("**🔗 Google Colab for Distribution Analysis**")
