@@ -773,7 +773,18 @@ class Module06_IDFCurve(LearningModule):
         """Slide 8: Excel Workshop Preparation"""
         with UIComponents.slide_container("theory"):
             st.markdown("## Excel Workshop: Let's Build IDF Curves Together!")
-            
+
+            # Add prominent notice about data and Colab
+            UIComponents.highlight_box("""
+            **🎯 Workshop Resources Available:**
+
+            📊 **Real 60-minute rainfall data** for download in notebooks folder
+            🔗 **Google Colab notebook** for advanced distribution analysis
+            📋 **Excel templates** with formulas ready to use
+
+            **Everything you need to create professional IDF curves!**
+            """)
+
             col1, col2 = UIComponents.two_column_layout()
             
             with col1:
@@ -851,40 +862,73 @@ class Module06_IDFCurve(LearningModule):
             col1, col2, col3 = UIComponents.three_column_layout()
             
             with col1:
-                st.markdown("**Base Data File**")
-                if st.button("📊 Download Base Data", use_container_width=True):
-                    # Create base data Excel file
-                    base_excel = ExcelExporter.create_idf_base_data(self.base_data)
-                    st.download_button(
-                        "Download Excel",
-                        base_excel,
-                        "idf_base_data.xlsx",
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
+                st.markdown("**60-min Rainfall Data**")
+
+                # Check if idf.xlsx exists in notebooks folder
+                import os
+                idf_file_path = "notebooks/idf.xlsx"
+
+                if os.path.exists(idf_file_path):
+                    with open(idf_file_path, "rb") as file:
+                        st.download_button(
+                            "📊 Download IDF Data (Excel)",
+                            file.read(),
+                            "idf.xlsx",
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            use_container_width=True
+                        )
+                    st.markdown("**📄 Contains:**")
+                    st.markdown("• 34 years of 60-min data")
+                    st.markdown("• Statistics summary")
+                    st.markdown("• Excel template")
+                    st.markdown("• Complete instructions")
+                else:
+                    st.error("IDF data file not found. Please check notebooks/idf.xlsx")
                     
             with col2:
-                st.markdown("**Template File**")
-                if st.button("📋 Download Template", use_container_width=True):
-                    # Create template with formulas
-                    template_excel = ExcelExporter.create_idf_workshop_template(self.base_data)
-                    st.download_button(
-                        "Download Template", 
-                        template_excel,
-                        "idf_workshop_template.xlsx",
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
+                st.markdown("**Distribution Analysis**")
+                UIComponents.highlight_box("""
+                **🔗 Google Colab Notebook**
+
+                Use this notebook to find the best-fit probability distribution for your rainfall data:
+                """)
+
+                st.markdown("**[📊 Open Distribution Analysis Colab](https://colab.research.google.com/drive/1t-Sz6p3xeyxV74efFzu6_gFsigLAkbHz?usp=sharing)**")
+
+                st.markdown("**📋 Steps:**")
+                st.markdown("1. Click the Colab link above")
+                st.markdown("2. Upload your downloaded data")
+                st.markdown("3. Run the analysis")
+                st.markdown("4. Get best distribution for IDF curves")
+
+                st.markdown("**🎯 Benefits:**")
+                st.markdown("• Compare multiple distributions")
+                st.markdown("• Statistical goodness-of-fit tests")
+                st.markdown("• Professional IDF parameters")
                     
             with col3:
-                st.markdown("**Instructions**")
-                if st.button("📖 Download Guide", use_container_width=True):
-                    # Create instruction document
-                    instructions = ExcelExporter.create_idf_instructions()
-                    st.download_button(
-                        "Download Guide",
-                        instructions,
-                        "idf_workshop_guide.pdf",
-                        "application/pdf"
-                    )
+                st.markdown("**Excel Template**")
+
+                UIComponents.highlight_box("""
+                **📋 Excel Formulas Guide**
+
+                **Disaggregation ratios:**
+                • 5-min: =B2*0.25
+                • 10-min: =B2*0.35
+                • 15-min: =B2*0.45
+                • 30-min: =B2*0.65
+                • 120-min: =B2*1.30
+
+                **Intensity calculations:**
+                • I = (P/Duration)*60
+                """)
+
+                st.markdown("**📈 Workflow:**")
+                st.markdown("1. Download 60-min data (left)")
+                st.markdown("2. Apply disaggregation formulas")
+                st.markdown("3. Calculate intensities")
+                st.markdown("4. Use Colab for distribution analysis")
+                st.markdown("5. Create final IDF curves")
             
             UIComponents.highlight_box("""
             **🎯 Workshop Goals:**
