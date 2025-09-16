@@ -36,7 +36,7 @@ class Module06_IDFCurve(LearningModule):
             prerequisites=["module_01", "module_02", "module_03"],
             learning_objectives=objectives,
             difficulty="intermediate",
-            total_slides=10
+            total_slides=9
         )
         
         super().__init__(info)
@@ -70,11 +70,10 @@ class Module06_IDFCurve(LearningModule):
             "I-D-F: Breaking it Down",
             "Intensity vs Depth",
             "The Magic Ratios",
-            "Step-by-Step Calculations", 
+            "Step-by-Step Calculations",
             "Frequency Analysis",
             "Creating IDF Curves",
             "Excel Workshop Prep",
-            "Engineering Applications",
             "Practice Problem"
         ]
     
@@ -88,7 +87,6 @@ class Module06_IDFCurve(LearningModule):
             self._slide_frequency_analysis,
             self._slide_creating_curves,
             self._slide_excel_prep,
-            self._slide_applications,
             self._slide_practice_problem
         ]
         
@@ -940,237 +938,96 @@ class Module06_IDFCurve(LearningModule):
         
         return None
     
-    def _slide_applications(self) -> Optional[bool]:
-        """Slide 9: Engineering Applications"""
-        with UIComponents.slide_container("theory"):
-            st.markdown("## Real-World Applications of IDF Curves")
-            
-            col1, col2 = UIComponents.two_column_layout()
-            
-            with col1:
-                st.markdown("### 🏗️ Infrastructure Design")
-                
-                applications = [
-                    {
-                        "name": "Storm Drain Design",
-                        "return_period": "10-year",
-                        "duration": "Time of concentration",
-                        "example": "15-min for urban area"
-                    },
-                    {
-                        "name": "Culvert Sizing", 
-                        "return_period": "25-year",
-                        "duration": "Catchment response time",
-                        "example": "30-min for rural highway"
-                    },
-                    {
-                        "name": "Detention Pond",
-                        "return_period": "100-year", 
-                        "duration": "Multiple durations",
-                        "example": "Critical duration analysis"
-                    }
-                ]
-                
-                for app in applications:
-                    UIComponents.highlight_box(f"""
-                    **{app['name']}**  
-                    Design: {app['return_period']} return period  
-                    Duration: {app['duration']}  
-                    Example: {app['example']}
-                    """)
-                    
-            with col2:
-                st.markdown("### 🧮 Design Example")
-                
-                st.markdown("**Problem:** Size a storm drain for residential area")
-                
-                # Interactive design example
-                design_return = st.selectbox("Design return period:", [2, 5, 10, 25], index=2, key="design_example")
-                time_concentration = st.slider("Time of concentration (min):", 5, 60, 15, key="tc_example")
-                
-                if 'idf_table' in st.session_state:
-                    idf_table = st.session_state['idf_table']
-                    
-                    # Find closest duration
-                    available_durations = [5, 10, 15, 30, 60, 120]
-                    closest_duration = min(available_durations, key=lambda x: abs(x - time_concentration))
-                    
-                    design_intensity = idf_table.loc[design_return, f'{closest_duration} min']
-                    
-                    st.markdown("**Solution:**")
-                    st.markdown(f"• Design return period: {design_return} years")
-                    st.markdown(f"• Duration: {closest_duration} minutes")
-                    st.markdown(f"• Design intensity: **{design_intensity:.1f} mm/hr**")
-                    
-                    # Calculate runoff (simplified)
-                    catchment_area = st.number_input("Catchment area (hectares):", 0.1, 10.0, 1.5, 0.1, key="area_example")
-                    runoff_coeff = st.slider("Runoff coefficient:", 0.1, 1.0, 0.7, 0.05, key="runoff_coeff")
-                    
-                    # Rational method: Q = CIA
-                    design_flow = runoff_coeff * design_intensity * catchment_area / 360  # Convert to m³/s
-                    
-                    UIComponents.big_number_display(f"{design_flow:.2f}", "m³/s")
-                    st.markdown("**Design flow using rational method**")
-                    
-                else:
-                    st.info("Complete the IDF curve creation first to see design calculations!")
-            
-            st.markdown("### 🌍 Climate Change Considerations")
-            
-            col1, col2, col3 = UIComponents.three_column_layout()
-            
-            with col1:
-                st.markdown("**Current Practice**")
-                st.markdown("• Use historical data")
-                st.markdown("• Assume stationarity") 
-                st.markdown("• Standard return periods")
-                
-            with col2:
-                st.markdown("**Climate Impacts**")
-                st.markdown("• Increased intensities")
-                st.markdown("• Changed patterns")
-                st.markdown("• More extremes")
-                
-            with col3:
-                st.markdown("**Adaptation**")
-                st.markdown("• Safety factors")
-                st.markdown("• Updated data")
-                st.markdown("• Flexible design")
-            
-            st.markdown("### 📊 Industry Standards")
-            
-            standards_data = {
-                'Infrastructure Type': ['Residential', 'Commercial', 'Industrial', 'Critical Facilities'],
-                'Typical Return Period': ['2-10 years', '10-25 years', '25-50 years', '50-500 years'],
-                'Duration Basis': ['Time of concentration', 'Time of concentration', 'Critical duration', 'PMF or extreme analysis']
-            }
-            
-            standards_df = pd.DataFrame(standards_data)
-            st.dataframe(standards_df, use_container_width=True)
-        
-        return None
     
     def _slide_practice_problem(self) -> Optional[bool]:
-        """Slide 10: Practice Problem"""
+        """Slide 9: Practice Problem - Conceptual Understanding"""
         with UIComponents.slide_container("interactive"):
-            st.markdown("## Practice Problem: Design Challenge")
-            
+            st.markdown("## Practice Problem: Understanding IDF Applications")
+
             st.markdown("### 🎯 Engineering Scenario")
-            
+
             UIComponents.highlight_box("""
-            **You are designing a storm drainage system for a new shopping center.**
-            
-            **Given information:**
+            **You are consulting on storm drainage design for a new shopping center.**
+
+            **Project details:**
             - Shopping center (commercial development)
             - Catchment area: 2.5 hectares
             - Time of concentration: 20 minutes
             - Runoff coefficient: 0.85
-            - Local standards require 25-year design
+            - Local standards require 25-year design event
             """)
-            
+
             col1, col2 = UIComponents.two_column_layout()
-            
+
             with col1:
-                st.markdown("### 🧮 Step-by-Step Solution")
-                
-                # Walk through the solution
-                st.markdown("**Step 1: Identify design parameters**")
-                st.markdown("• Return period: 25 years")  
-                st.markdown("• Duration: 20 minutes (≈ 15 or 30 min)")
-                st.markdown("• Area: 2.5 hectares")
-                st.markdown("• C = 0.85")
-                
-                st.markdown("**Step 2: Find design intensity**")
-                
-                duration_choice = st.radio(
-                    "Choose closest duration from IDF curve:",
-                    ["15 minutes", "30 minutes"],
-                    key="practice_duration"
-                )
-                
-                if 'idf_table' in st.session_state:
-                    idf_table = st.session_state['idf_table']
-                    
-                    if "15" in duration_choice:
-                        intensity = idf_table.loc[25, '15 min']
-                        duration_used = 15
-                    else:
-                        intensity = idf_table.loc[25, '30 min'] 
-                        duration_used = 30
-                        
-                    st.markdown(f"**Design intensity: {intensity:.1f} mm/hr**")
-                    
-                    st.markdown("**Step 3: Calculate design flow**")
-                    st.markdown("Using rational method: Q = C × I × A")
-                    
-                    # Calculation
-                    area_m2 = 2.5 * 10000  # Convert hectares to m²
-                    runoff_coeff = 0.85
-                    
-                    # Q = CIA where I is in mm/hr, A in m², result in L/s
-                    flow_ls = runoff_coeff * intensity * area_m2 / 3600  # L/s
-                    flow_cms = flow_ls / 1000  # m³/s
-                    
-                    st.markdown(f"Q = 0.85 × {intensity:.1f} × 25,000 / 3600")
-                    st.markdown(f"Q = {flow_ls:.0f} L/s = {flow_cms:.3f} m³/s")
-                    
-                    UIComponents.big_number_display(f"{flow_ls:.0f}", "L/s")
-                    UIComponents.big_number_display(f"{flow_cms:.3f}", "m³/s")
-                    
-                else:
-                    st.error("Please complete IDF curve creation in previous slides!")
-                    
+                st.markdown("### 🧠 Conceptual Analysis")
+
+                st.markdown("**Step 1: Understanding the Parameters**")
+                st.markdown("• **Return period (25 years)**: How rare should our design storm be?")
+                st.markdown("• **Duration (20 minutes)**: How long does the critical storm last?")
+                st.markdown("• **Area (2.5 hectares)**: Size of the contributing watershed")
+                st.markdown("• **Runoff coefficient (0.85)**: High for commercial area with lots of pavement")
+
+                st.markdown("**Step 2: IDF Curve Application**")
+                st.markdown("• Find the intersection of 25-year return period and 20-minute duration")
+                st.markdown("• Read the corresponding rainfall intensity")
+                st.markdown("• Use this intensity for drainage system design")
+
+                st.markdown("**Step 3: Design Considerations**")
+                st.markdown("• Apply rational method: Q = CIA")
+                st.markdown("• Size pipes to handle calculated flow")
+                st.markdown("• Consider safety factors and future conditions")
+
             with col2:
-                st.markdown("### 🎨 Your Turn: Try Different Scenarios")
-                
-                st.markdown("**Modify the parameters:**")
-                
-                user_area = st.slider("Area (hectares):", 0.5, 5.0, 2.5, 0.1, key="user_area")
-                user_return = st.selectbox("Return period:", [2, 5, 10, 25, 50], index=3, key="user_return")
-                user_runoff = st.slider("Runoff coefficient:", 0.3, 1.0, 0.85, 0.05, key="user_runoff")
-                
-                if 'idf_table' in st.session_state:
-                    # Get intensity for 15-minute duration
-                    user_intensity = idf_table.loc[user_return, '15 min']
-                    
-                    # Calculate flow
-                    user_area_m2 = user_area * 10000
-                    user_flow_ls = user_runoff * user_intensity * user_area_m2 / 3600
-                    user_flow_cms = user_flow_ls / 1000
-                    
-                    st.markdown("**Your results:**")
-                    st.markdown(f"• Intensity: {user_intensity:.1f} mm/hr")
-                    st.markdown(f"• Flow: {user_flow_ls:.0f} L/s")
-                    st.markdown(f"• Flow: {user_flow_cms:.3f} m³/s")
-                    
-                    # Show pipe sizing estimate
-                    velocity = 2.0  # m/s typical design velocity
-                    pipe_area = user_flow_cms / velocity  # m²
-                    pipe_diameter = np.sqrt(4 * pipe_area / np.pi) * 1000  # mm
-                    
-                    st.markdown(f"**Estimated pipe diameter: {pipe_diameter:.0f} mm**")
-                    st.markdown("*(Assuming 2 m/s velocity)*")
-            
-            st.markdown("### 🏆 Challenge Questions")
-            
-            challenge_questions = [
-                "1. How would the design flow change if this were a residential area (C = 0.4)?",
-                "2. What if climate change increases intensities by 20%?", 
-                "3. How does using 30-min instead of 15-min duration affect the design?",
-                "4. What pipe diameter would you need for the calculated flow?"
+                st.markdown("### 🤔 Discussion Questions")
+
+                st.markdown("**Think about these aspects:**")
+
+                discussion_points = [
+                    "**Climate considerations**: How might future climate affect our 25-year design?",
+                    "**Duration selection**: Why is time of concentration important for duration choice?",
+                    "**Return period**: Should critical infrastructure use longer return periods?",
+                    "**Data quality**: How does 75 years of rainfall data improve our confidence?",
+                    "**Regional differences**: Would IDF curves be different in other climates?"
+                ]
+
+                for point in discussion_points:
+                    st.markdown(f"• {point}")
+
+                st.markdown("### 📊 Data Analysis Exercise")
+
+                UIComponents.highlight_box("""
+                **Using the provided rainfall dataset:**
+
+                1. **Explore patterns**: Use the 75 years of hourly data to find seasonal trends
+                2. **Create pivot tables**: Analyze rainfall by decade, season, and hour
+                3. **Compare methods**: Use both Excel and Google Colab for analysis
+                4. **Validate results**: Check if your IDF curves make physical sense
+                """)
+
+            st.markdown("### 🏆 Learning Objectives Review")
+
+            learning_checks = [
+                "✅ **Understand IDF components**: Can you explain Intensity, Duration, and Frequency?",
+                "✅ **Data application**: Can you use 75 years of rainfall data for analysis?",
+                "✅ **Tool proficiency**: Are you comfortable with both Excel and statistical software?",
+                "✅ **Engineering judgment**: Can you critically evaluate IDF curve results?"
             ]
-            
-            for question in challenge_questions:
-                st.markdown(question)
-            
+
+            for check in learning_checks:
+                st.markdown(check)
+
+            st.markdown("### 🚀 Next Steps")
+
             UIComponents.highlight_box("""
-            **💡 Real Engineering Note:**
-            This is a simplified analysis. Real projects also consider:
-            - Pipe hydraulics and losses
-            - Multiple design points
-            - Storage requirements  
-            - Construction constraints
-            - Economic optimization
+            **Continue your IDF learning journey:**
+
+            🔍 **Advanced Analysis**: Use the Google Colab notebook for distribution fitting
+            📊 **Comparative Studies**: Analyze how IDF curves vary by region
+            🌡️ **Climate Studies**: Investigate long-term trends in rainfall intensity
+            🏗️ **Design Applications**: Apply IDF curves to real engineering projects
+
+            **Remember**: IDF curves are fundamental tools that connect meteorology with engineering design!
             """)
         
         return None
