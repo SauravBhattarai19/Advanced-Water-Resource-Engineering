@@ -36,7 +36,7 @@ class Module06_IDFCurve(LearningModule):
             prerequisites=["module_01", "module_02", "module_03"],
             learning_objectives=objectives,
             difficulty="intermediate",
-            total_slides=9
+            total_slides=7
         )
         
         super().__init__(info)
@@ -71,8 +71,6 @@ class Module06_IDFCurve(LearningModule):
             "Intensity vs Depth",
             "NOAA Temporal Scaling Method",
             "NOAA Process: Step-by-Step",
-            "Frequency Analysis",
-            "Creating IDF Curves",
             "Excel Workshop Prep",
             "Practice Problem"
         ]
@@ -84,8 +82,6 @@ class Module06_IDFCurve(LearningModule):
             self._slide_intensity_vs_depth,
             self._slide_magic_ratios,
             self._slide_step_calculations,
-            self._slide_frequency_analysis,
-            self._slide_creating_curves,
             self._slide_excel_prep,
             self._slide_practice_problem
         ]
@@ -564,231 +560,7 @@ class Module06_IDFCurve(LearningModule):
 
         return None
     
-    def _slide_frequency_analysis(self) -> Optional[bool]:
-        """Slide 6: Frequency Analysis for All Durations"""
-        with UIComponents.slide_container("interactive"):
-            st.markdown("## Frequency Analysis: All Durations at Once")
-            
-            if 'idf_complete_data' not in st.session_state:
-                st.error("Please complete the previous slide first!")
-                return None
-                
-            complete_data = st.session_state['idf_complete_data']
-            durations = [5, 10, 15, 30, 60, 120]
-            design_periods = [2, 5, 10, 25, 50, 100]
-            
-            st.markdown("### 📊 Design Intensity Table")
-            
-            # Calculate design intensities for all combinations
-            design_intensities = {}
-            
-            for dur in durations:
-                intensity_column = f'Intensity_{dur}min'
-                intensity_data = complete_data[intensity_column].values
-                sorted_data, return_periods, _ = AnalysisTools.weibull_positions(intensity_data)
-                
-                design_intensities[dur] = {}
-                for T in design_periods:
-                    design_val = np.interp(T, return_periods[::-1], sorted_data[::-1])
-                    design_intensities[dur][T] = design_val
-            
-            # Create the IDF table
-            idf_table = pd.DataFrame(index=design_periods)
-            idf_table.index.name = 'Return Period (years)'
-            
-            for dur in durations:
-                column_name = f'{dur} min'
-                idf_table[column_name] = [design_intensities[dur][T] for T in design_periods]
-            
-            # Display table with formatting
-            st.dataframe(idf_table.round(1), use_container_width=True)
-            
-            # Store for Excel export
-            st.session_state['idf_table'] = idf_table
-            
-            st.markdown("### 🎯 Key Observations")
-            
-            col1, col2 = UIComponents.two_column_layout()
-            
-            with col1:
-                st.markdown("**Patterns in the table:**")
-                observations = [
-                    "📉 **Intensity decreases** with longer duration",
-                    "📈 **Intensity increases** with longer return period", 
-                    "⚡ **5-minute intensities** are highest",
-                    "💧 **2-hour intensities** are lowest"
-                ]
-                for obs in observations:
-                    st.markdown(obs)
-                    
-                # Quick comparison
-                intensity_5min_2yr = design_intensities[5][2]
-                intensity_120min_2yr = design_intensities[120][2]
-                ratio = intensity_5min_2yr / intensity_120min_2yr
-                
-                UIComponents.highlight_box(f"""
-                **Example:** 2-year event  
-                5-min: {intensity_5min_2yr:.1f} mm/hr  
-                120-min: {intensity_120min_2yr:.1f} mm/hr  
-                Ratio: {ratio:.1f}:1
-                """)
-                
-            with col2:
-                # Matrix heatmap
-                import plotly.express as px
-                
-                # Prepare data for heatmap
-                heatmap_data = []
-                for T in design_periods:
-                    for dur in durations:
-                        heatmap_data.append({
-                            'Return Period': f'{T}-year',
-                            'Duration': f'{dur} min',
-                            'Intensity': design_intensities[dur][T]
-                        })
-                
-                heatmap_df = pd.DataFrame(heatmap_data)
-                
-                # Create pivot for heatmap
-                pivot_data = heatmap_df.pivot(index='Return Period', columns='Duration', values='Intensity')
-                
-                fig = px.imshow(
-                    pivot_data.values,
-                    x=pivot_data.columns,
-                    y=pivot_data.index,
-                    color_continuous_scale='Blues',
-                    title="IDF Design Intensities (mm/hr)",
-                    text_auto='.1f'
-                )
-                
-                fig.update_layout(height=350)
-                st.plotly_chart(fig, use_container_width=True)
-        
-        return None
     
-    def _slide_creating_curves(self) -> Optional[bool]:
-        """Slide 7: Creating the IDF Curves"""
-        with UIComponents.slide_container("interactive"):
-            st.markdown("## Creating the Famous IDF Curves!")
-            
-            if 'idf_table' not in st.session_state:
-                st.error("Please complete the frequency analysis first!")
-                return None
-                
-            idf_table = st.session_state['idf_table']
-            durations = [5, 10, 15, 30, 60, 120]
-            
-            st.markdown("### 📈 The Complete IDF Curve Family")
-            
-            # Create the IDF curves plot
-            fig = go.Figure()
-            
-            colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
-            
-            for i, (T, row) in enumerate(idf_table.iterrows()):
-                intensities = [row[f'{dur} min'] for dur in durations]
-                
-                fig.add_trace(go.Scatter(
-                    x=durations,
-                    y=intensities,
-                    mode='lines+markers',
-                    name=f'{T}-year',
-                    line=dict(width=3, color=colors[i % len(colors)]),
-                    marker=dict(size=8)
-                ))
-            
-            fig.update_layout(
-                title="Complete IDF Curves",
-                xaxis_title="Duration (minutes)",
-                yaxis_title="Intensity (mm/hr)",
-                height=500,
-                xaxis_type='log',
-                yaxis_type='log',
-                legend=dict(x=0.7, y=0.95)
-            )
-            
-            fig = PlotTools.apply_theme(fig)
-            st.plotly_chart(fig, use_container_width=True)
-            
-            st.markdown("### 🎯 How to Read IDF Curves")
-            
-            col1, col2 = UIComponents.two_column_layout()
-            
-            with col1:
-                st.markdown("**Interactive Example:**")
-                
-                selected_return = st.selectbox(
-                    "Select return period:",
-                    [2, 5, 10, 25, 50, 100],
-                    index=2
-                )
-                
-                selected_duration = st.selectbox(
-                    "Select duration:",
-                    durations,
-                    index=2
-                )
-                
-                # Get the intensity
-                intensity_value = idf_table.loc[selected_return, f'{selected_duration} min']
-                
-                UIComponents.big_number_display(f"{intensity_value:.1f}", "mm/hr")
-                
-                st.markdown(f"""
-                **Interpretation:**  
-                A **{selected_return}-year** storm lasting **{selected_duration} minutes** 
-                will have an intensity of **{intensity_value:.1f} mm/hr**
-                """)
-                
-                # Practical calculation
-                total_rainfall = (intensity_value * selected_duration) / 60
-                st.markdown(f"**Total rainfall:** {total_rainfall:.1f} mm in {selected_duration} minutes")
-                
-            with col2:
-                st.markdown("**Reading Steps:**")
-                
-                steps = [
-                    "1️⃣ **Choose your design return period** (how rare?)",
-                    "2️⃣ **Select your time of concentration** (how long?)",
-                    "3️⃣ **Read the intensity** from the curve",
-                    "4️⃣ **Calculate total rainfall** if needed",
-                    "5️⃣ **Use for runoff calculations**"
-                ]
-                
-                for step in steps:
-                    st.markdown(step)
-                
-                UIComponents.highlight_box("""
-                **Pro Tip:** Most urban drainage systems are designed for 
-                10-year return periods with durations equal to time of concentration.
-                """)
-            
-            st.markdown("### 💾 Data Export")
-            
-            col1, col2 = UIComponents.two_column_layout()
-            
-            with col1:
-                if st.button("📊 Download IDF Table (Excel)", use_container_width=True):
-                    excel_data = ExcelExporter.create_idf_template(idf_table, durations)
-                    st.download_button(
-                        label="Click to Download Excel File",
-                        data=excel_data,
-                        file_name="idf_curves_data.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
-                    
-            with col2:
-                st.markdown("**Excel file contains:**")
-                excel_contents = [
-                    "• Complete IDF table",
-                    "• Chart template", 
-                    "• Calculation formulas",
-                    "• Design examples"
-                ]
-                for content in excel_contents:
-                    st.markdown(content)
-        
-        return None
     
     def _slide_excel_prep(self) -> Optional[bool]:
         """Slide 8: Excel Workshop Preparation"""
