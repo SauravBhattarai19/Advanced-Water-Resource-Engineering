@@ -590,15 +590,15 @@ class Module06_IDFCurve(LearningModule):
 
                 # Check if data file exists
                 import os
-                csv_file_path = "notebooks/rainfall_data_1950_2024.csv"
+                excel_file_path = "notebooks/rainfall_data_1950_2024.xlsx"
 
-                if os.path.exists(csv_file_path):
-                    with open(csv_file_path, "rb") as file:
+                if os.path.exists(excel_file_path):
+                    with open(excel_file_path, "rb") as file:
                         st.download_button(
-                            "📄 Download Hourly Rainfall Data (CSV)",
+                            "📊 Download Hourly Rainfall Data (Excel)",
                             file.read(),
-                            "rainfall_data_1950_2024.csv",
-                            "text/csv",
+                            "rainfall_data_1950_2024.xlsx",
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                             use_container_width=True
                         )
 
