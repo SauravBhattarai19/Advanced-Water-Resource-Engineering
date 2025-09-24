@@ -1,0 +1,255 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{multirow}
+
+\title{\textbf{Advanced Water Resources Engineering\\
+Midterm Examination}}
+\author{Fall 2025}
+\date{Duration: 20 minutes \quad Total Marks: 50}
+
+\begin{document}
+
+\maketitle
+
+\vspace{-0.5cm}
+
+\section*{Instructions}
+\begin{itemize}[nosep]
+    \item This examination consists of two sections with a total duration of \textbf{20 minutes}.
+    \item \textbf{Section A}: 10 multiple choice questions, 3 marks each (30 marks total)
+    \item \textbf{Section B}: 3 numerical problems
+    \item \textbf{Total marks}: 50
+    \item Formula table is provided on the last page
+    \item Show all calculations clearly for numerical problems
+    \item Use the answer sheet provided for multiple choice questions
+\end{itemize}
+\vspace{0.8cm}
+
+
+
+Name and J\_Number: 
+\vspace{0.1cm}
+
+\hrule
+\vspace{0.3cm}
+
+\section*{Section A: Multiple Choice Questions (30 marks)}
+\textbf{Choose the best answer for each question. Each question is worth 3 marks.}
+
+\begin{enumerate}
+
+\item In the Weibull plotting position method, if you have 25 years of data and an event is ranked 5th largest, what is its plotting position P?
+\begin{enumerate}[label=\Alph*)]
+    \item P = 5/25 = 0.20
+    \item P = 5/26 = 0.19
+    \item P = 5/24 = 0.21
+    \item P = 4/25 = 0.16
+\end{enumerate}
+
+\item Which statement best distinguishes probability from frequency?
+\begin{enumerate}[label=\Alph*)]
+    \item Probability and frequency are the same thing
+    \item Frequency is observed count; probability is long-term expectation
+    \item Probability changes with more data; frequency stays constant
+    \item Frequency is theoretical; probability is observed
+\end{enumerate}
+
+\item If the risk of failure is 0.35, what is the reliability?
+\begin{enumerate}[label=\Alph*)]
+    \item 0.35
+    \item 0.65
+    \item 1.35
+    \item Cannot be determined
+\end{enumerate}
+
+\item What is the main difference between PDF and CDF?
+\begin{enumerate}[label=\Alph*)]
+    \item PDF shows probability density; CDF shows cumulative probability
+    \item PDF is for continuous data; CDF is for discrete data
+    \item PDF values can exceed 1; CDF values cannot exceed 1
+    \item Both A and C are correct
+\end{enumerate}
+
+\item Given the following goodness-of-fit test results for annual maximum precipitation:
+\begin{center}
+\begin{tabular}{lc}
+Distribution & KS test p-value \\
+\hline
+Normal & 0.12 \\
+Log-Normal & 0.45 \\
+Exponential & 0.02 \\
+Gumbel & 0.38 \\
+\end{tabular}
+\end{center}
+Which distribution provides the best fit ($\alpha$ = 0.05)?
+\begin{enumerate}[label=\Alph*)]
+    \item Normal
+    \item Log-Normal
+    \item Exponential
+    \item Gumbel
+\end{enumerate}
+
+\item A GEV distribution is fitted to flood data and the shape parameter $\xi = +0.25$. This indicates:
+\begin{enumerate}[label=\Alph*)]
+    \item Light tail (Weibull type) - extremes are bounded
+    \item Standard tail (Gumbel type) - normal extreme behavior
+    \item Heavy tail (Fréchet type) - extreme events more likely
+    \item The distribution fitting failed
+\end{enumerate}
+
+\item In IDF curves, what does the "I" represent?
+\begin{enumerate}[label=\Alph*)]
+    \item Total rainfall depth (mm)
+    \item Rainfall intensity (mm/hr)
+    \item Infrastructure design standard
+    \item Infiltration rate (mm/hr)
+\end{enumerate}
+
+\item A "100-year flood" occurred twice in a 10-year period. Which statement is correct?
+\begin{enumerate}[label=\Alph*)]
+    \item It's no longer a 100-year flood; it's now a 5-year flood
+    \item The 100-year designation is wrong and should be recalculated
+    \item This is natural variability; the long-term probability remains 1\%
+    \item This indicates climate change has altered the flood regime
+\end{enumerate}
+
+\item Why are longer return periods generally selected for critical infrastructure?  
+\begin{enumerate}[label=\Alph*)]
+    \item To minimize the cost of construction  
+    \item To reduce the probability of failure and increase safety  
+    \item Because rainfall data is always available for long durations  
+    \item To simplify hydrologic analysis  
+\end{enumerate}
+
+\item If 30 mm of rain falls in 45 minutes, what is the rainfall intensity?
+\begin{enumerate}[label=\Alph*)]
+    \item 30 mm/hr
+    \item 40 mm/hr
+    \item 45 mm/hr
+    \item 67 mm/hr
+\end{enumerate}
+
+\end{enumerate}
+
+\newpage
+
+\section*{Section B: Numerical Problems (20 marks)}
+
+\begin{enumerate}
+
+\item \textbf{IDF Curve Application (8 marks)}
+
+From an IDF curve, the 100-year return period rainfall intensity for 30 minutes duration is 85 mm/hr. Calculate the peak discharge for a watershed with the following characteristics:
+\begin{itemize}[nosep]
+    \item Drainage area (A) = 3.5 hectares
+    \item Runoff coefficient (C) = 0.75
+    \item Use the rational method: $Q = \frac{1}{3600} \times C \times I \times A$ (where I is in mm/hr, A is in hectares)
+\end{itemize}
+
+Express your answer in L/s.
+
+\vspace{8cm}
+
+\item \textbf{Risk and Reliability Analysis (6 marks)}
+
+A storm drainage system is designed for a 25-year return period storm with a design life of 40 years. Calculate:
+\begin{enumerate}[label=\alph*)]
+    \item The annual exceedance probability
+    \item The lifetime risk
+    \item The reliability
+\end{enumerate}
+
+Show whether this design meets the acceptable risk criterion of $\leq 30\%$ for commercial infrastructure.
+
+\vspace{8cm}
+
+\item \textbf{Return Period Calculation (6 marks)}
+
+From 35 years of annual maximum flood data, the 3rd largest event has a magnitude of 450 m$^3$/s. Using the Weibull plotting position method:
+\begin{enumerate}[label=\alph*)]
+    \item Calculate the plotting position P
+    \item Calculate the return period T
+    \item State what this return period means in practical terms
+\end{enumerate}
+
+\vspace{7cm}
+
+\end{enumerate}
+
+\newpage
+
+\section*{Formula Table}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Category} & \textbf{Formula} & \textbf{Description} \\
+\hline
+\multirow{3}{*}{\textbf{Frequency Analysis}}
+& $P = \frac{m}{n+1}$ & Weibull plotting position \\
+& $T = \frac{1}{P}$ & Return period \\
+& $P = \frac{1}{T}$ & Annual probability \\
+\hline
+\multirow{3}{*}{\textbf{Risk \& Reliability}}
+& $R = 1-(1-P)^n$ & Lifetime risk \\
+& $Rel = (1-P)^n$ & Reliability \\
+& $R + Rel = 1$ & Risk-reliability relationship \\
+\hline
+\multirow{3}{*}{\textbf{Probability}}
+& $0 \leq P \leq 1$ & Probability range \\
+& $P(X \geq a) = 1 - F(a)$ & Exceedance probability \\
+& $P(a \leq X \leq b) = F(b) - F(a)$ & Interval probability \\
+\hline
+\multirow{2}{*}{\textbf{IDF Curves}}
+& $I = \frac{P}{t}$ & Intensity calculation \\
+& $Q = \frac{1}{3600} \times C \times I \times A$ & Rational method (I in mm/hr, A in hectares) \\
+\hline
+\multirow{3}{*}{\textbf{GEV Distribution}}
+& $\xi > 0$ & Heavy tail (Fréchet) \\
+& $\xi = 0$ & Gumbel distribution \\
+& $\xi < 0$ & Light tail (Weibull) \\
+\hline
+\end{tabular}
+
+\vspace{0.5cm}
+
+\textbf{Where:}
+\begin{multicols}{2}
+\begin{itemize}[nosep]
+    \item $P$ = Probability
+    \item $m$ = Rank of observation
+    \item $n$ = Total observations
+    \item $T$ = Return period (years)
+    \item $R$ = Risk
+    \item $Rel$ = Reliability
+    \item $I$ = Rainfall intensity (mm/hr)
+    \item $Q$ = Peak discharge
+    \item $C$ = Runoff coefficient
+    \item $A$ = Drainage area (hectares)
+    \item $t$ = Duration
+    \item $F(x)$ = Cumulative distribution function
+    \item $\xi$ = GEV shape parameter
+    \item $\mu$ = Mean
+    \item $\sigma$ = Standard deviation
+    \item $Z$ = Standard normal variable
+\end{itemize}
+\end{multicols}
+
+\vspace{0.5cm}
+
+\textbf{Unit Conversions:}
+\begin{itemize}[nosep]
+    \item 1 hectare = 10,000 m$^2$
+    \item Intensity (mm/hr) = $\frac{\text{Depth (mm)}}{\text{Duration (hr)}}$
+    \item To convert minutes to hours: divide by 60
+    \item To convert m$^3$/s to L/s: multiply by 1000
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,407 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{framed}
+
+\title{\textbf{Advanced Water Resources Engineering\\
+Midterm Examination - ANSWER KEY}}
+\author{Fall 2025}
+\date{Duration: 20 minutes \quad Total Marks: 50}
+
+\definecolor{correct}{RGB}{0,128,0}
+\definecolor{solution}{RGB}{0,0,139}
+
+\newenvironment{correctanswer}
+    {\color{correct}\textbf{CORRECT ANSWER: }}
+    {}
+
+\newenvironment{solutionbox}
+    {\color{solution}\begin{framed}\textbf{SOLUTION:}\\\vspace{0.2cm}}
+    {\end{framed}}
+
+\begin{document}
+
+\maketitle
+
+\vspace{-0.5cm}
+
+\section*{Instructions for Students}
+\begin{itemize}[nosep]
+    \item This answer key provides detailed solutions to all exam questions
+    \item Use this to check your work and understand the solution methods
+    \item Pay attention to the step-by-step calculations in numerical problems
+    \item All formulas used are listed in the original exam's formula table
+    \item Partial credit guidelines are provided for numerical problems
+\end{itemize}
+
+\hrule
+\vspace{0.3cm}
+
+\section*{Section A: Multiple Choice Questions - ANSWERS (30 marks)}
+
+\begin{enumerate}
+
+\item \textbf{Question:} In the Weibull plotting position method, if you have 25 years of data and an event is ranked 5th largest, what is its plotting position P?
+
+\begin{correctanswer}
+B) P = 5/26 = 0.19
+\end{correctanswer}
+
+\begin{solutionbox}
+Using the Weibull plotting position formula: $P = \frac{m}{n+1}$
+\begin{itemize}[nosep]
+    \item $m$ = rank = 5 (5th largest event)
+    \item $n$ = total years = 25
+    \item $P = \frac{5}{25+1} = \frac{5}{26} = 0.192 \approx 0.19$
+\end{itemize}
+\textbf{Why other answers are wrong:}
+\begin{itemize}[nosep]
+    \item A) Uses $m/n$ instead of $m/(n+1)$
+    \item C) Uses $(n-1)$ in denominator (incorrect)
+    \item D) Uses wrong rank value $(m-1)$
+\end{itemize}
+\end{solutionbox}
+
+\item \textbf{Question:} Which statement best distinguishes probability from frequency?
+
+\begin{correctanswer}
+B) Frequency is observed count; probability is long-term expectation
+\end{correctanswer}
+
+\begin{solutionbox}
+\textbf{Key distinction:}
+\begin{itemize}[nosep]
+    \item \textbf{Frequency}: Historical count of occurrences in a sample (e.g., "5 floods in 50 years")
+    \item \textbf{Probability}: Theoretical long-term expectation (e.g., "P(flood) = 0.1 per year")
+\end{itemize}
+Frequency is used to \emph{estimate} probability, but they are conceptually different.
+\end{solutionbox}
+
+\item \textbf{Question:} If the risk of failure is 0.35, what is the reliability?
+
+\begin{correctanswer}
+B) 0.65
+\end{correctanswer}
+
+\begin{solutionbox}
+Using the fundamental relationship: $Risk + Reliability = 1$
+\begin{itemize}[nosep]
+    \item Given: Risk = 0.35
+    \item Therefore: Reliability = 1 - 0.35 = 0.65
+\end{itemize}
+This means there's a 65\% chance the system will NOT fail during its design life.
+\end{solutionbox}
+
+\item \textbf{Question:} What is the main difference between PDF and CDF?
+
+\begin{correctanswer}
+D) Both A and C are correct
+\end{correctanswer}
+
+\begin{solutionbox}
+\textbf{Both statements A and C are true:}
+\begin{itemize}[nosep]
+    \item \textbf{Statement A}: PDF shows probability density; CDF shows cumulative probability ✓
+    \item \textbf{Statement C}: PDF values can exceed 1; CDF values cannot exceed 1 ✓
+\end{itemize}
+\textbf{Key points:}
+\begin{itemize}[nosep]
+    \item PDF: $f(x)$ = probability density (can be > 1), area under curve = probability
+    \item CDF: $F(x)$ = actual cumulative probability (always ≤ 1)
+\end{itemize}
+\end{solutionbox}
+
+\item \textbf{Question:} Given KS test results, which distribution provides the best fit ($\alpha$ = 0.05)?
+
+\begin{correctanswer}
+B) Log-Normal
+\end{correctanswer}
+
+\begin{solutionbox}
+\textbf{Kolmogorov-Smirnov Test Interpretation:}
+\begin{itemize}[nosep]
+    \item Significance level: $\alpha = 0.05$
+    \item \textbf{Rule}: Accept distribution if p-value > $\alpha$ = 0.05
+    \item \textbf{Choose}: Distribution with highest p-value among acceptable ones
+\end{itemize}
+
+\begin{tabular}{lcc}
+Distribution & p-value & Accept? \\
+\hline
+Normal & 0.12 & ✓ (0.12 > 0.05) \\
+\textbf{Log-Normal} & \textbf{0.45} & ✓ \textbf{(Highest)} \\
+Exponential & 0.02 & ✗ (0.02 < 0.05) \\
+Gumbel & 0.38 & ✓ (0.38 > 0.05) \\
+\end{tabular}
+
+Log-Normal has the highest p-value (0.45), indicating the best fit.
+\end{solutionbox}
+
+\item \textbf{Question:} GEV distribution with shape parameter $\xi = +0.25$ indicates:
+
+\begin{correctanswer}
+C) Heavy tail (Fréchet type) - extreme events more likely
+\end{correctanswer}
+
+\begin{solutionbox}
+\textbf{GEV Shape Parameter Interpretation:}
+\begin{itemize}[nosep]
+    \item $\xi > 0$: \textbf{Fréchet type} - Heavy tail, extreme events more likely
+    \item $\xi = 0$: \textbf{Gumbel type} - Standard extreme behavior
+    \item $\xi < 0$: \textbf{Weibull type} - Light tail, extremes bounded
+\end{itemize}
+Since $\xi = +0.25 > 0$, this is Fréchet type with heavy tail.
+\textbf{Engineering implication}: Be more conservative in design as very large events are more probable than Gumbel would predict.
+\end{solutionbox}
+
+\item \textbf{Question:} In IDF curves, what does the "I" represent?
+
+\begin{correctanswer}
+B) Rainfall intensity (mm/hr)
+\end{correctanswer}
+
+\begin{solutionbox}
+\textbf{IDF Curve Components:}
+\begin{itemize}[nosep]
+    \item \textbf{I} = Intensity (mm/hr or in/hr) - Rate of rainfall
+    \item \textbf{D} = Duration (minutes or hours) - How long it rains
+    \item \textbf{F} = Frequency (return period in years) - How often it occurs
+\end{itemize}
+Intensity is different from total depth - it's the rate at which rain falls.
+\end{solutionbox}
+
+\item \textbf{Question:} A "100-year flood" occurred twice in a 10-year period. Which statement is correct?
+
+\begin{correctanswer}
+C) This is natural variability; the long-term probability remains 1\%
+\end{correctanswer}
+
+\begin{solutionbox}
+\textbf{Common Misconception Clarification:}
+\begin{itemize}[nosep]
+    \item "100-year flood" means 1\% annual probability, not exact 100-year intervals
+    \item \textbf{Each year is independent} - past events don't affect future probabilities
+    \item Short-term clustering is normal due to natural randomness
+    \item Long-term probability estimates require long-term data (not 10 years)
+\end{itemize}
+\textbf{Analogy}: Flipping a coin twice and getting two heads doesn't make it a "biased coin" - it's just natural variability.
+\end{solutionbox}
+
+\item \textbf{Question:} Why are longer return periods generally selected for critical infrastructure?
+
+\begin{correctanswer}
+B) To reduce the probability of failure and increase safety
+\end{correctanswer}
+
+\begin{solutionbox}
+\textbf{Design Philosophy:}
+\begin{itemize}[nosep]
+    \item Longer return period = Lower annual probability = Higher design values
+    \item Critical infrastructure (hospitals, nuclear plants) requires higher safety
+    \item \textbf{Risk tolerance decreases} with consequence severity
+\end{itemize}
+
+\textbf{Typical Design Standards:}
+\begin{itemize}[nosep]
+    \item Residential: 10-25 years
+    \item Commercial: 25-50 years
+    \item Critical: 100-500+ years
+\end{itemize}
+\end{solutionbox}
+
+\item \textbf{Question:} If 30 mm of rain falls in 45 minutes, what is the rainfall intensity?
+
+\begin{correctanswer}
+B) 40 mm/hr
+\end{correctanswer}
+
+\begin{solutionbox}
+\textbf{Intensity Calculation:}
+$$I = \frac{\text{Rainfall Depth}}{\text{Duration}} = \frac{P}{t}$$
+
+\textbf{Step-by-step:}
+\begin{itemize}[nosep]
+    \item Given: P = 30 mm, t = 45 minutes
+    \item Convert time to hours: $t = \frac{45}{60} = 0.75$ hours
+    \item Calculate intensity: $I = \frac{30 \text{ mm}}{0.75 \text{ hr}} = 40 \text{ mm/hr}$
+\end{itemize}
+
+\textbf{Alternative method:}
+$$I = \frac{30 \text{ mm}}{45 \text{ min}} \times \frac{60 \text{ min}}{1 \text{ hr}} = 40 \text{ mm/hr}$$
+\end{solutionbox}
+
+\end{enumerate}
+
+\newpage
+
+\section*{Section B: Numerical Problems - SOLUTIONS (20 marks)}
+
+\begin{enumerate}
+
+\item \textbf{IDF Curve Application (8 marks)}
+
+\textbf{Given:}
+\begin{itemize}[nosep]
+    \item Rainfall intensity: I = 85 mm/hr (100-year, 30-min duration)
+    \item Drainage area: A = 3.5 hectares
+    \item Runoff coefficient: C = 0.75
+    \item Formula: $Q = C \times I \times A$
+\end{itemize}
+
+\begin{solutionbox}
+\textbf{Step 1: Convert area to proper units}
+\begin{itemize}[nosep]
+    \item A = 3.5 hectares = 3.5 × 10,000 m² = 35,000 m²
+\end{itemize}
+
+\textbf{Step 2: Apply rational method formula}
+$$Q = C \times I \times A$$
+$$Q = 0.75 \times 85 \times 35,000$$
+
+\textbf{Step 3: Calculate discharge in m³/s}
+\begin{itemize}[nosep]
+    \item Note: When I is in mm/hr and A is in m², the result needs unit conversion
+    \item $Q = \frac{0.75 \times 85 \times 35,000}{3,600,000}$ m³/s
+    \item $Q = \frac{2,231,250}{3,600,000} = 0.620$ m³/s
+\end{itemize}
+
+\textbf{Step 4: Convert to L/s}
+$$Q = 0.620 \text{ m³/s} \times 1000 \text{ L/m³} = 620 \text{ L/s}$$
+
+\textbf{FINAL ANSWER: Q = 620 L/s}
+
+\textbf{Marking scheme:}
+\begin{itemize}[nosep]
+    \item Area conversion (1 mark)
+    \item Formula setup (2 marks)
+    \item Calculation steps (3 marks)
+    \item Unit conversion (1 mark)
+    \item Final answer (1 mark)
+\end{itemize}
+\end{solutionbox}
+
+\item \textbf{Risk and Reliability Analysis (6 marks)}
+
+\textbf{Given:}
+\begin{itemize}[nosep]
+    \item Design return period: T = 25 years
+    \item Design life: n = 40 years
+    \item Acceptable risk criterion: ≤ 30\% for commercial infrastructure
+\end{itemize}
+
+\begin{solutionbox}
+\textbf{Part (a): Annual exceedance probability}
+$$P = \frac{1}{T} = \frac{1}{25} = 0.04 \text{ or } 4\%$$
+
+\textbf{Part (b): Lifetime risk}
+$$R = 1-(1-P)^n = 1-(1-0.04)^{40}$$
+$$R = 1-(0.96)^{40} = 1-0.201 = 0.799 \text{ or } 79.9\%$$
+
+\textbf{Part (c): Reliability}
+$$Rel = (1-P)^n = (0.96)^{40} = 0.201 \text{ or } 20.1\%$$
+
+\textbf{Verification:} $R + Rel = 0.799 + 0.201 = 1.000$ ✓
+
+\textbf{Design adequacy check:}
+\begin{itemize}[nosep]
+    \item Calculated lifetime risk: 79.9\%
+    \item Acceptable criterion: ≤ 30\%
+    \item \textbf{Conclusion}: Design does NOT meet criteria (79.9\% > 30\%)
+    \item \textbf{Recommendation}: Use longer return period (e.g., 100-year design)
+\end{itemize}
+
+\textbf{Marking scheme:}
+\begin{itemize}[nosep]
+    \item Annual probability (1 mark)
+    \item Risk calculation (2 marks)
+    \item Reliability calculation (1 mark)
+    \item Adequacy assessment (2 marks)
+\end{itemize}
+\end{solutionbox}
+
+\item \textbf{Return Period Calculation (6 marks)}
+
+\textbf{Given:}
+\begin{itemize}[nosep]
+    \item Total years of data: n = 35
+    \item Event rank: m = 3 (3rd largest)
+    \item Event magnitude: 450 m³/s
+\end{itemize}
+
+\begin{solutionbox}
+\textbf{Part (a): Plotting position P}
+Using Weibull formula:
+$$P = \frac{m}{n+1} = \frac{3}{35+1} = \frac{3}{36} = 0.0833$$
+
+\textbf{Part (b): Return period T}
+$$T = \frac{1}{P} = \frac{1}{0.0833} = 12.0 \text{ years}$$
+
+\textbf{Part (c): Practical meaning}
+\begin{itemize}[nosep]
+    \item \textbf{Statistical interpretation}: A flood of 450 m³/s or larger has a 1-in-12 chance (8.33\%) of occurring in any given year
+    \item \textbf{Engineering interpretation}: This is approximately a 12-year design event
+    \item \textbf{Important note}: This doesn't mean it occurs exactly every 12 years - it's an average recurrence interval
+    \item \textbf{Design usage}: Suitable for standard infrastructure requiring ~10-15 year protection
+\end{itemize}
+
+\textbf{Marking scheme:}
+\begin{itemize}[nosep]
+    \item Plotting position calculation (2 marks)
+    \item Return period calculation (2 marks)
+    \item Practical interpretation (2 marks)
+\end{itemize}
+\end{solutionbox}
+
+\end{enumerate}
+
+\newpage
+
+\section*{Additional Learning Resources}
+
+\subsection*{Common Student Errors and How to Avoid Them}
+
+\begin{enumerate}
+\item \textbf{Weibull Formula}: Remember to use $(n+1)$ in denominator, not just $n$
+\item \textbf{Unit Conversions}: Always check units in rational method calculations
+\item \textbf{Risk vs Reliability}: These are complements - if one increases, the other decreases
+\item \textbf{GEV Shape Parameter}: Sign matters! Positive = heavy tail, negative = light tail
+\item \textbf{Return Period Interpretation}: It's a probability statement, not a guarantee of timing
+\end{enumerate}
+
+\subsection*{Key Formulas Quick Reference}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Concept} & \textbf{Formula} \\
+\hline
+Weibull plotting position & $P = \frac{m}{n+1}$ \\
+Return period & $T = \frac{1}{P}$ \\
+Lifetime risk & $R = 1-(1-P)^n$ \\
+Reliability & $Rel = (1-P)^n$ \\
+Intensity & $I = \frac{\text{Depth}}{\text{Time}}$ \\
+Rational method & $Q = C \times I \times A$ \\
+\hline
+\end{tabular}
+
+\subsection*{Study Tips for Future Exams}
+
+\begin{itemize}
+\item Practice unit conversions - they appear frequently
+\item Understand the physical meaning behind mathematical formulas
+\item Remember that probability and statistics describe uncertainty, not exact predictions
+\item Always check if your final answers make engineering sense
+\item Review the difference between sample statistics and population parameters
+\end{itemize}
+
+\vspace{1cm}
+\textbf{Final Note:} This answer key is designed to help you learn. If you got questions wrong, make sure you understand WHY the correct answer is right and where your reasoning went off track.
+
+\end{document}

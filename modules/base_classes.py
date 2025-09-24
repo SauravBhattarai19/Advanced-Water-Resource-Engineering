@@ -166,24 +166,25 @@ class LearningModule(ABC):
         """Render specific slide, return True if module completed"""
         pass
     
-    def render(self) -> bool:
+    def render(self, show_header=False) -> bool:
         """Main render method for the module"""
-        # Module header
-        st.markdown(f"""
-        <div class="module-header">
-            <h1>{self.info.title}</h1>
-            <div class="module-meta">
-                <span class="difficulty difficulty-{self.info.difficulty}">{self.info.difficulty.upper()}</span>
-                <span class="duration">{self.info.duration_minutes} minutes</span>
+        # Optional module header
+        if show_header:
+            st.markdown(f"""
+            <div class="module-header">
+                <h1>{self.info.title}</h1>
+                <div class="module-meta">
+                    <span class="difficulty difficulty-{self.info.difficulty}">{self.info.difficulty.upper()}</span>
+                    <span class="duration">{self.info.duration_minutes} minutes</span>
+                </div>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
+            """, unsafe_allow_html=True)
+
         # Navigation
         slide_titles = self.get_slide_titles()
         current_slide = self.navigator.render_navigation(slide_titles)
-        
+
         # Render current slide
         module_completed = self.render_slide(current_slide)
-        
+
         return module_completed or False
