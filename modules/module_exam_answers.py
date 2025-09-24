@@ -861,7 +861,7 @@ T = 1/P = 1/0.0833 = 12.0 years
 
         return True  # Mark module as complete
 
-    def render(self, show_header=False) -> Optional[bool]:
+    def render(self, show_header=False) -> bool:
         """Override render to add custom styling"""
         # Add custom CSS for answer key
         st.markdown("""
