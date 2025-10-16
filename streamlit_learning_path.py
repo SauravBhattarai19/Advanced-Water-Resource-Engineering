@@ -34,6 +34,7 @@ try:
     from module_05_gev_analysis import Module05_GEVAnalysis
     from module_06_idf_curve import Module06_IDFCurve
     from module_exam_answers import ModuleExamAnswers
+    from module_midterm_answers import ModuleMidtermAnswers
     from module_08_spatiotemporal import Module08_SpatioTemporal
 except ImportError as e:
     st.error(f"Module import error: {e}")
@@ -66,7 +67,8 @@ class LearningPathApp:
             Module04_Distributions(),
             Module05_GEVAnalysis(),
             Module06_IDFCurve(),
-            ModuleExamAnswers(),  # Exam answer key and review
+            ModuleExamAnswers(),  # Quiz 1 answer key and review
+            ModuleMidtermAnswers(),  # Midterm exam solutions
             Module08_SpatioTemporal()  # Spatio-temporal analysis
         ]
     
