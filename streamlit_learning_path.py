@@ -35,7 +35,9 @@ try:
     from module_06_idf_curve import Module06_IDFCurve
     from module_exam_answers import ModuleExamAnswers
     from module_midterm_answers import ModuleMidtermAnswers
-    from module_08_spatiotemporal import Module08_SpatioTemporal
+    from module_09_trend_detection import Module09_TrendDetection
+    from module_10_breakpoint_detection import Module10_BreakpointDetection
+    from module_11_spatiotemporal import Module11_Spatiotemporal
 except ImportError as e:
     st.error(f"Module import error: {e}")
     st.info("Please ensure all module files are in the modules/ directory")
@@ -67,9 +69,11 @@ class LearningPathApp:
             Module04_Distributions(),
             Module05_GEVAnalysis(),
             Module06_IDFCurve(),
-            ModuleExamAnswers(),  # Quiz 1 answer key and review
-            ModuleMidtermAnswers(),  # Midterm exam solutions
-            Module08_SpatioTemporal()  # Spatio-temporal analysis
+            ModuleExamAnswers(),  # Module 7: Quiz 1 answer key and review
+            ModuleMidtermAnswers(),  # Module 8: Midterm exam solutions
+            Module09_TrendDetection(),  # Module 9: Trend analysis with Mann-Kendall test
+            Module10_BreakpointDetection(),  # Module 10: Change point detection with Pettitt test
+            Module11_Spatiotemporal()  # Module 11: Spatiotemporal mapping and regional analysis
         ]
     
     def _initialize_session_state(self):
@@ -160,7 +164,9 @@ class LearningPathApp:
                     "Create IDF curves from rainfall data",
                     "Apply disaggregation ratios for short-duration analysis",
                     "Use IDF curves for engineering design decisions",
-                    "Analyze spatio-temporal patterns in water resources",
+                    "Detect monotonic trends using Mann-Kendall test",
+                    "Identify abrupt change points with Pettitt test",
+                    "Create spatiotemporal maps for regional assessment",
                     "Review and master all concepts through interactive exam solutions"
                 ]
                 for obj in advanced_objectives:
