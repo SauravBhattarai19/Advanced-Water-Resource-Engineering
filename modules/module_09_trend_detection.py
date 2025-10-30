@@ -501,7 +501,7 @@ class Module09_TrendDetection(LearningModule):
                 - Count +1 for increases
                 - Count -1 for decreases
                 
-                **Result: S = +38**
+                **Result: S = +41**
                 """)
             
             with col2:
@@ -524,16 +524,16 @@ class Module09_TrendDetection(LearningModule):
                 Since S > 0:
                 ```
                 Z = (S - 1) / √Var(S)
-                  = ({38} - 1) / √{var_S:.2f}
-                  = {37} / {np.sqrt(var_S):.2f}
-                  = {37 / np.sqrt(var_S):.3f}
+                  = (41 - 1) / √{var_S:.2f}
+                  = 40 / {np.sqrt(var_S):.2f}
+                  = {40 / np.sqrt(var_S):.3f}
                 ```
                 
                 **Step 4: Find P-Value**
                 
-                For Z = {37 / np.sqrt(var_S):.3f} (two-tailed):
+                For Z = {40 / np.sqrt(var_S):.3f} (two-tailed):
                 ```
-                p-value ≈ {2 * (1 - stats.norm.cdf(37 / np.sqrt(var_S))):.6f}
+                p-value ≈ {2 * (1 - stats.norm.cdf(40 / np.sqrt(var_S))):.6f}
                 ```
                 
                 **Conclusion: p < 0.001**  
