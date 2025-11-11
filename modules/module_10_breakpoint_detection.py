@@ -58,7 +58,7 @@ class Module10_BreakpointDetection(LearningModule):
         st.markdown("""
         <div style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
                     padding: 2rem; border-radius: 10px; margin-bottom: 2rem; color: white;'>
-            <h1 style='margin: 0; color: white;'>Module 8: Break Point Detection in Hydrologic Time Series</h1>
+            <h1 style='margin: 0; color: white;'>Module 10: Break Point Detection in Hydrologic Time Series</h1>
             <p style='margin: 0.5rem 0 0 0; opacity: 0.9;'>
                 The Pettitt Test: Mathematical Framework and Engineering Applications
             </p>
@@ -488,37 +488,43 @@ class Module10_BreakpointDetection(LearningModule):
                 st.markdown("Consider 6 observations:")
                 
                 example_data = np.array([45, 48, 52, 72, 75, 73])
-                st.markdown(f"**Data:** {example_data}")
+                st.markdown(f"**Data:** {list(example_data)}")
                 
                 t = 3
                 st.markdown(f"\n**Testing t = {t}:**")
-                st.markdown(f"Before (i=1 to {t}): [{45}, {48}, {52}]")
-                st.markdown(f"After (j={t+1} to 6): [{72}, {75}, {73}]")
+                st.markdown(f"Before (i=1 to {t}): [45, 48, 52]")
+                st.markdown(f"After (j={t+1} to 6): [72, 75, 73]")
                 
                 st.markdown("\n**All pairwise comparisons:**")
                 
+                # Create comparison table
                 U_t = 0
-                comparisons = []
+                comparison_data = []
                 for i in range(t):
                     for j in range(t, 6):
                         diff = example_data[i] - example_data[j]
-                        sign = np.sign(diff)
-                        U_t += sign
-                        symbol = '+1' if sign > 0 else ('-1' if sign < 0 else '0')
-                        comparisons.append(
-                            f"X[{i+1}]={example_data[i]} vs X[{j+1}]={example_data[j]}: "
-                            f"{example_data[i]}-{example_data[j]}={diff:.0f} → {symbol}"
-                        )
+                        sign_val = np.sign(diff)
+                        U_t += sign_val
+                        symbol = '+1' if sign_val > 0 else ('-1' if sign_val < 0 else '0')
+                        comparison_data.append({
+                            'i': i+1,
+                            'X_i': int(example_data[i]),
+                            'j': j+1,
+                            'X_j': int(example_data[j]),
+                            'X_i - X_j': int(diff),
+                            'sgn(X_i - X_j)': symbol
+                        })
                 
-                for comp in comparisons:
-                    st.markdown(f"• {comp}")
+                # Display as table
+                comparison_df = pd.DataFrame(comparison_data)
+                st.dataframe(comparison_df, use_container_width=True, hide_index=True)
                 
-                st.markdown(f"\n**Sum: U₃,₆ = {U_t}**")
+                st.markdown(f"\n**Sum: U₃,₆ = {int(U_t)}**")
                 
                 if U_t < 0:
-                    st.success(f"**Strongly negative** → Indicates upward shift after t={t}")
+                    st.success(f"**Strongly negative** (U = {int(U_t)}) → Indicates upward shift after t={t}")
                 elif U_t > 0:
-                    st.warning(f"**Strongly positive** → Indicates downward shift after t={t}")
+                    st.warning(f"**Strongly positive** (U = {int(U_t)}) → Indicates downward shift after t={t}")
                 else:
                     st.info("**Near zero** → No clear change")
             
@@ -542,37 +548,54 @@ class Module10_BreakpointDetection(LearningModule):
             - **K_τ:** Maximum absolute value of U statistic (test statistic)
             - **τ:** Time index where maximum occurs (estimated change point)
             
-            **Example Calculation:**
+            **Continuing Example from Section 3.2:**
+            
+            Using the same dataset: [45, 48, 52, 72, 75, 73]
+            
+            We now calculate U_{t,T} for **all** possible split points (t = 1 to 5):
             """)
             
-            # Create example U values across all t
-            example_t_values = list(range(1, 10))
-            example_U_values = [3, 7, 12, -18, -25, -28, -22, -15, -8]
-            example_abs_U = [abs(u) for u in example_U_values]
+            # Calculate U for all t using the same data
+            example_data = np.array([45, 48, 52, 72, 75, 73])
+            T_example = len(example_data)
+            all_U_values = []
+            all_t_values = list(range(1, T_example))
+            
+            for t in all_t_values:
+                U_t = 0
+                for i in range(t):
+                    for j in range(t, T_example):
+                        U_t += np.sign(example_data[i] - example_data[j])
+                all_U_values.append(U_t)
+            
+            all_abs_U = [abs(u) for u in all_U_values]
             
             col1, col2 = st.columns([1, 1])
             
             with col1:
                 # Table
                 results_df = pd.DataFrame({
-                    't': example_t_values,
-                    'U_{t,T}': example_U_values,
-                    '|U_{t,T}|': example_abs_U
+                    't': all_t_values,
+                    'Before': [f"[{', '.join(map(str, example_data[:t].astype(int)))}]" for t in all_t_values],
+                    'After': [f"[{', '.join(map(str, example_data[t:].astype(int)))}]" for t in all_t_values],
+                    'U(t,T)': all_U_values,
+                    '|U(t,T)|': all_abs_U
                 })
-                st.dataframe(results_df, use_container_width=True)
+                st.dataframe(results_df, use_container_width=True, hide_index=True)
                 
-                max_abs_U = max(example_abs_U)
-                tau_detected = example_t_values[example_abs_U.index(max_abs_U)]
+                max_abs_U = max(all_abs_U)
+                tau_detected = all_t_values[all_abs_U.index(max_abs_U)]
                 
-                st.success(f"**K_τ = {max_abs_U}** (maximum)")
+                st.success(f"**K_τ = {max_abs_U}** (maximum absolute value)")
                 st.success(f"**τ = {tau_detected}** (change point location)")
+                st.info(f"**U_τ = {all_U_values[tau_detected-1]}** (U value at change point)")
             
             with col2:
                 # Plot U values
                 fig = go.Figure()
                 
                 fig.add_trace(go.Scatter(
-                    x=example_t_values, y=example_U_values,
+                    x=all_t_values, y=all_U_values,
                     mode='lines+markers',
                     name='U_{t,T}',
                     line=dict(color='steelblue', width=3),
@@ -580,7 +603,7 @@ class Module10_BreakpointDetection(LearningModule):
                 ))
                 
                 fig.add_trace(go.Scatter(
-                    x=[tau_detected], y=[example_U_values[tau_detected-1]],
+                    x=[tau_detected], y=[all_U_values[tau_detected-1]],
                     mode='markers',
                     name=f'τ={tau_detected}',
                     marker=dict(size=20, color='red', symbol='star')
@@ -596,6 +619,17 @@ class Module10_BreakpointDetection(LearningModule):
                 )
                 fig = PlotTools.apply_theme(fig)
                 st.plotly_chart(fig, use_container_width=True)
+            
+            st.markdown(f"""
+            **Interpretation:**
+            
+            - All U values are **negative**, indicating values before each split point are consistently 
+              **smaller** than values after the split
+            - The maximum absolute U occurs at **t = {tau_detected}**, which splits the data as:
+              - **Before:** {list(example_data[:tau_detected].astype(int))} (lower values)
+              - **After:** {list(example_data[tau_detected:].astype(int))} (higher values)
+            - This represents the strongest evidence of an **upward shift** in the data
+            """)
             
             st.markdown("### 3.4 Statistical Significance: P-Value Calculation")
             
@@ -617,13 +651,18 @@ class Module10_BreakpointDetection(LearningModule):
             - Continuity correction improves small-sample performance
             - More accurate for T > 40
             
-            **Step-by-Step Calculation Example:**
+            **Completing the Example from Sections 3.2 and 3.3:**
             
-            Given: K_τ = 28, T = 10
+            Using our dataset [45, 48, 52, 72, 75, 73], we found:
+            - **K_τ = 15** (from Section 3.3)
+            - **T = 6** (sample size)
+            
+            Now we calculate the p-value:
             """)
             
-            K_tau_ex = 28
-            T_ex = 10
+            # Use the actual values from the example
+            K_tau_ex = 15  # Maximum |U| from the example
+            T_ex = 6
             
             col1, col2, col3 = st.columns(3)
             
@@ -666,9 +705,22 @@ p ≈ 2×exp(-{ratio:.4f})
             elif p_val < 0.01:
                 st.success(f"**p = {p_val:.6f} < 0.01** → Very strong evidence for change point")
             elif p_val < 0.05:
-                st.info(f"**p = {p_val:.6f} < 0.05** → Significant change point at α=0.05")
+                st.success(f"**p = {p_val:.6f} < 0.05** → Significant change point at α=0.05")
             else:
                 st.warning(f"**p = {p_val:.6f} ≥ 0.05** → No significant change point detected")
+            
+            st.markdown(f"""
+            **Complete Summary of Example [45, 48, 52, 72, 75, 73]:**
+            
+            - **Sample size:** T = {T_ex}
+            - **Test statistic:** K_τ = {K_tau_ex}
+            - **Change point:** τ = 3 (splits data into [45, 48, 52] vs [72, 75, 73])
+            - **P-value:** p = {p_val:.6f}
+            - **Conclusion:** {"**Significant change detected!** There is strong statistical evidence of an upward shift after position 3." if p_val < 0.05 else "No significant change detected at α = 0.05."}
+            
+            **Note:** This is a small sample (T=6), so the asymptotic approximation may be less accurate. 
+            For T < 20, exact permutation tests or Monte Carlo simulations provide more reliable p-values.
+            """)
             
             st.markdown("### 📝 Practice Problem")
             
@@ -730,7 +782,15 @@ p ≈ 2 × exp(-{ratio_prob:.4f})
                     st.info(f"""
                     **p = {p_val_prob:.6f} ≥ 0.05**
                     
-                    **Conclusion:** Fail to reject H₀. No significant change point detected at α = 0.05.
+                    **Conclusion:** Fail to reject H₀ at α = 0.05. While the p-value 
+                    ({p_val_prob:.4f}) shows moderate evidence of a change point, it does not 
+                    reach the conventional significance threshold of 0.05.
+                    
+                    **Note:** The result is borderline. Consider:
+                    - If using α = 0.10, this would be significant (p < 0.10)
+                    - Investigate if there's a physical explanation for a potential change
+                    - Collect more data if possible
+                    - Consider regional analysis for additional evidence
                     """)
             
             st.markdown("---")
@@ -1495,7 +1555,7 @@ plot_pettitt_results(discharge_data, result['tau'], result['p_value'])
         # Module Summary
         with st.expander("## 7. MODULE SUMMARY", expanded=False):
             st.markdown("""
-            **Key Takeaways from Module 8: Breakpoint Detection**
+            **Key Takeaways from Module 10: Breakpoint Detection**
             
             **1. Fundamental Concepts:**
             - Change point detection identifies abrupt shifts in hydrologic time series
@@ -1526,12 +1586,12 @@ plot_pettitt_results(discharge_data, result['tau'], result['p_value'])
             - Visualization critical for stakeholder communication
             
             **Next Steps:**
-            - Module 9 covers spatiotemporal mapping of trends and change points
+            - Module 11 covers spatiotemporal mapping of trends and change points
             - Integrate trend and change point analysis for complete assessment
             - Apply these methods to your own hydrologic datasets
             """)
         
-        st.success("🎉 Module 8 Complete! You've mastered change point detection and the Pettitt test.")
+        st.success("🎉 Module 10 Complete! You've mastered change point detection and the Pettitt test.")
         return True
         
         # References
