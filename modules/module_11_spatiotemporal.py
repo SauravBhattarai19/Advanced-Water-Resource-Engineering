@@ -58,7 +58,7 @@ class Module11_Spatiotemporal(LearningModule):
         st.markdown("""
         <div style='background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); 
                     padding: 2rem; border-radius: 10px; margin-bottom: 2rem; color: white;'>
-            <h1 style='margin: 0; color: white;'>Module 9: Spatiotemporal Representation in Water Resources</h1>
+            <h1 style='margin: 0; color: white;'>Module 11: Spatiotemporal Representation in Water Resources</h1>
             <p style='margin: 0.5rem 0 0 0; opacity: 0.9;'>
                 Mapping and Visualizing Hydrologic Patterns for Regional Engineering Decisions
             </p>
@@ -1261,7 +1261,7 @@ class Module11_Spatiotemporal(LearningModule):
             
             ---
             
-            **MODULE 7: Trend Detection**
+            **MODULE 9: Trend Detection**
             - **What it does:** Detects gradual, monotonic changes over time
             - **Key method:** Mann-Kendall test + Sen's slope
             - **Output:** Trend magnitude, direction, significance
@@ -1269,7 +1269,7 @@ class Module11_Spatiotemporal(LearningModule):
             
             ↓ *Apply at each station in network*
             
-            **MODULE 9: Spatiotemporal Representation (Current)**
+            **MODULE 11: Spatiotemporal Representation (Current)**
             - **What it does:** Maps spatial patterns of trends
             - **Key method:** Spatial visualization, interpolation, regional statistics
             - **Output:** Trend maps, regional patterns, priority areas
@@ -1277,7 +1277,7 @@ class Module11_Spatiotemporal(LearningModule):
             
             ---
             
-            **MODULE 8: Change Point Detection**
+            **MODULE 10: Change Point Detection**
             - **What it does:** Identifies abrupt shifts in statistical properties
             - **Key method:** Pettitt test
             - **Output:** Change point location (τ), significance, magnitude
@@ -1285,7 +1285,7 @@ class Module11_Spatiotemporal(LearningModule):
             
             ↓ *Apply at each station in network*
             
-            **MODULE 9: Spatiotemporal Representation (Current)**
+            **MODULE 11: Spatiotemporal Representation (Current)**
             - **What it does:** Maps change point locations and timing
             - **Key method:** Spatial visualization of change years
             - **Output:** Change point maps, temporal clusters
@@ -1299,11 +1299,11 @@ class Module11_Spatiotemporal(LearningModule):
             1. DATA PREPARATION (All Modules)
                └─ Quality control, synchronization, documentation
             
-            2. POINT ANALYSIS (Modules 7 & 8)
+            2. POINT ANALYSIS (Modules 9 & 10)
                ├─ Trend detection at each station
                └─ Change point detection at each station
             
-            3. SPATIAL ANALYSIS (Module 9)
+            3. SPATIAL ANALYSIS (Module 11)
                ├─ Create trend maps
                ├─ Create change point maps
                ├─ Identify regional patterns
@@ -1383,7 +1383,7 @@ class Module11_Spatiotemporal(LearningModule):
                 )
                 
                 if result2:
-                    st.success("🎉 Module 9 Complete! You've mastered spatiotemporal analysis for water resources engineering.")
+                    st.success("🎉 Module 11 Complete! You've mastered spatiotemporal analysis for water resources engineering.")
                     st.success("🎓 **Modules 7, 8, and 9 Complete!** You now have a comprehensive toolkit for analyzing non-stationarity in hydrologic systems.")
                     return True
         

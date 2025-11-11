@@ -58,7 +58,7 @@ class Module09_TrendDetection(LearningModule):
         st.markdown("""
         <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
                     padding: 2rem; border-radius: 10px; margin-bottom: 2rem; color: white;'>
-            <h1 style='margin: 0; color: white;'>Module 7: Trend Detection in Hydrologic Time Series</h1>
+            <h1 style='margin: 0; color: white;'>Module 9: Trend Detection in Hydrologic Time Series</h1>
             <p style='margin: 0.5rem 0 0 0; opacity: 0.9;'>
                 Statistical Methods for Detecting Long-Term Changes in Water Resources Data
             </p>
@@ -172,7 +172,7 @@ class Module09_TrendDetection(LearningModule):
             
             **Step Changes:**
             - Abrupt shifts in mean level
-            - Addressed in Module 8 (Change Point Detection)
+            - Addressed in Module 10 (Change Point Detection)
             
             **Cyclical Patterns:**
             - Periodic oscillations (e.g., ENSO, PDO)
@@ -1521,17 +1521,17 @@ plot_trend_analysis(discharge_data, mk_result, sens_result)
             trend analysis to actual water resources engineering problems.
             """)
             
-            st.markdown("### 7.4 Next Steps")
+            st.markdown("### 9.4 Next Steps")
             
             st.markdown("""
             **Continue Your Learning:**
             
-            → **Module 8:** Break Point Detection (Pettitt Test)
+            → **Module 10:** Break Point Detection (Pettitt Test)
             - Learn to detect abrupt changes in hydrologic data
             - Distinguish between trends and change points
             - Apply to dam construction and watershed modification scenarios
             
-            → **Module 9:** Spatiotemporal Representation
+            → **Module 11:** Spatiotemporal Representation
             - Create regional maps of trends
             - Analyze spatial patterns
             - Prioritize infrastructure investments
@@ -1543,7 +1543,7 @@ plot_trend_analysis(discharge_data, mk_result, sens_result)
             - Compare results with nearby stations
             """)
             
-            st.success("🎉 **Module 7 Complete!** You've mastered trend detection methods in hydrologic time series.")
+            st.success("🎉 **Module 9 Complete!** You've mastered trend detection methods in hydrologic time series.")
             
             return True
         
