@@ -1,0 +1,726 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{CIV 465: Advanced Water Resources Engineering}
+\rhead{Exam Solutions}
+\cfoot{Page \thepage\ of \pageref{LastPage}}
+
+% Custom commands
+\newcommand{\points}[1]{\textbf{[#1 points]}}
+\newcommand{\answer}[1]{\textcolor{blue}{\textbf{#1}}}
+\newcommand{\explanation}[1]{\begin{tcolorbox}[colback=green!5,colframe=green!40!black,title=Explanation]\small #1\end{tcolorbox}}
+
+\begin{document}
+
+% Title Section
+\begin{center}
+    \Large\textbf{Trend Detection and Breakpoint Analysis Exam}\\[0.2cm]
+    \large\textcolor{red}{\textbf{COMPLETE SOLUTIONS WITH EXPLANATIONS}}\\[0.3cm]
+    \large CIV 465: Advanced Water Resources Engineering\\
+    Jackson State University\\[0.3cm]
+\end{center}
+
+\vspace{0.5cm}
+
+%==============================================================================
+\section*{Part A: Multiple Choice Questions \points{30}}
+%==============================================================================
+
+\begin{enumerate}[leftmargin=*]
+
+\item A hydrologic time series dataset has a strongly skewed distribution with several extreme outliers. Which test is most appropriate for detecting monotonic trends?
+
+\answer{Answer: (b) Mann-Kendall test}
+
+\explanation{
+The Mann-Kendall test is a \textbf{non-parametric} test that:
+\begin{itemize}
+    \item Uses \textbf{ranks} instead of actual values, making it robust to outliers
+    \item Does NOT require normality assumption (works with skewed data)
+    \item Recommended by WMO (World Meteorological Organization) for hydrologic data
+\end{itemize}
+Linear regression (option a) assumes normality and is heavily influenced by outliers. The t-test (option c) also assumes normality. Pearson correlation (option d) measures linear association and is sensitive to outliers.
+}
+
+\vspace{0.3cm}
+
+\item In the Mann-Kendall test, if the S statistic equals +180 for a dataset with 25 observations, and the calculated p-value is 0.08, what should you conclude at $\alpha = 0.05$?
+
+\answer{Answer: (b) Fail to reject $H_0$; no significant trend detected}
+
+\explanation{
+Decision Rule: Compare p-value to significance level $\alpha$
+\begin{itemize}
+    \item p-value = 0.08 $>$ $\alpha$ = 0.05 $\Rightarrow$ Fail to reject $H_0$
+    \item This means the apparent upward pattern (S = +180) could reasonably occur by chance
+    \item Note: It WOULD be significant at $\alpha$ = 0.10 (since 0.08 $<$ 0.10)
+\end{itemize}
+The positive S indicates an increasing pattern, but it's not statistically significant at the 0.05 level. We need stronger evidence (lower p-value) to claim a real trend exists.
+}
+
+\vspace{0.3cm}
+
+\item Which statement correctly describes the difference between trends and change points in hydrologic data?
+
+\answer{Answer: (b) Trends are gradual monotonic changes; change points are abrupt shifts}
+
+\explanation{
+\textbf{Key Distinction:}
+\begin{itemize}
+    \item \textbf{Trends:} Gradual, monotonic (consistently up or down) changes over time
+        \begin{itemize}
+            \item Detected by Mann-Kendall test
+            \item Example: Slow increase in temperature due to climate change
+        \end{itemize}
+    \item \textbf{Change Points:} Sudden, abrupt shifts in mean level
+        \begin{itemize}
+            \item Detected by Pettitt test
+            \item Example: Dam construction immediately changing downstream flow
+        \end{itemize}
+\end{itemize}
+This distinction matters for engineering design: trends require projecting future values, while change points require splitting the dataset.
+}
+
+\vspace{0.3cm}
+
+\item You calculate Sen's slope = +2.5 mm/year with 95\% CI = [+1.8, +3.2] for annual rainfall. The Mann-Kendall p-value is 0.02. What does this indicate?
+
+\answer{Answer: (b) Significant increasing trend with high confidence in magnitude}
+
+\explanation{
+Three pieces of evidence work together:
+\begin{enumerate}
+    \item \textbf{Sen's slope = +2.5 mm/year:} Positive $\Rightarrow$ Increasing trend
+    \item \textbf{p-value = 0.02 $<$ 0.05:} Statistically significant trend
+    \item \textbf{95\% CI = [+1.8, +3.2]:}
+        \begin{itemize}
+            \item Narrow range $\Rightarrow$ High confidence in the magnitude
+            \item Does NOT include zero $\Rightarrow$ Confirms real positive change
+        \end{itemize}
+\end{enumerate}
+This is an ideal result: the trend is both statistically significant AND well-quantified with tight confidence bounds.
+}
+
+\vspace{0.3cm}
+
+\item For a Pettitt test, what does the $U_{t,T}$ statistic represent?
+
+\answer{Answer: (b) The sum of pairwise rank comparisons between segments before and after time $t$}
+
+\explanation{
+The $U_{t,T}$ statistic is calculated as:
+$$U_{t,T} = \sum_{i=1}^{t} \sum_{j=t+1}^{T} \text{sgn}(X_i - X_j)$$
+
+This is essentially a \textbf{Mann-Whitney statistic} that:
+\begin{itemize}
+    \item Compares ALL observations before time $t$ with ALL observations after time $t$
+    \item Uses the sign function: +1 if $X_i > X_j$, -1 if $X_i < X_j$, 0 if equal
+    \item Large positive $U$ = values before $t$ tend to be larger (downward shift)
+    \item Large negative $U$ = values before $t$ tend to be smaller (upward shift)
+\end{itemize}
+It's rank-based (non-parametric), not based on means or variances.
+}
+
+\vspace{0.3cm}
+
+\item A stream discharge dataset (40 years) shows: Mann-Kendall p = 0.03, Sen's slope = +2.1 m$^3$/s/year. The post-change period after a detected dam construction has only 3 years of data. What is the most appropriate engineering action?
+
+\answer{Answer: (c) Document the change point but use regional pooling or conservative design factors}
+
+\explanation{
+This is a practical engineering judgment question:
+\begin{itemize}
+    \item The change point is \textbf{real} (p = 0.03 $<$ 0.05)
+    \item But 3 years is \textbf{insufficient} for reliable frequency analysis (need at least 10-20 years)
+\end{itemize}
+
+\textbf{Best Practice:}
+\begin{enumerate}
+    \item Document the change point and its physical cause (dam)
+    \item Use data from similar regulated watersheds (regional pooling)
+    \item Apply conservative safety factors to account for uncertainty
+    \item Plan to re-analyze as more post-change data accumulates
+\end{enumerate}
+
+Using only 3 years (option a) gives unreliable statistics. Ignoring the change (option b) uses outdated data. Waiting indefinitely (option d) is impractical.
+}
+
+\end{enumerate}
+
+\newpage
+
+%==============================================================================
+\section*{Part B: Short Numerical Problems \points{45}}
+%==============================================================================
+
+\subsection*{Problem 1: Mann-Kendall S Statistic Calculation \points{15}}
+
+\textbf{Given Data:}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+Year & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+\hline
+Rainfall (mm) & 850 & 870 & 865 & 890 & 900 & 895 & 920 & 930 \\
+\hline
+\end{tabular}
+\end{center}
+
+S contributions: +7, +4, +5, +2, +1, +2, +1
+
+\vspace{0.3cm}
+
+\textbf{(a) Calculate the total Mann-Kendall S statistic.} \points{3}
+
+\answer{Solution:}
+$$S = 7 + 4 + 5 + 2 + 1 + 2 + 1 = \boxed{+22}$$
+
+\explanation{
+The S statistic is simply the sum of all pairwise comparison results. Since S = +22 (positive), this indicates an \textbf{increasing trend} in rainfall. The more positive S is, the stronger the upward trend.
+}
+
+\vspace{0.3cm}
+
+\textbf{(b) Calculate the variance of S.} \points{4}
+
+\answer{Solution:}
+$$\text{Var}(S) = \frac{n(n-1)(2n+5)}{18}$$
+
+With $n = 8$:
+$$\text{Var}(S) = \frac{8 \times 7 \times (2 \times 8 + 5)}{18} = \frac{8 \times 7 \times 21}{18} = \frac{1176}{18} = \boxed{65.33}$$
+
+\explanation{
+This formula assumes no tied values. The variance tells us how much S would vary if there were no trend (under $H_0$). It's used to standardize S into a Z-score for determining statistical significance.
+}
+
+\vspace{0.3cm}
+
+\textbf{(c) Calculate the standardized Z-score.} \points{4}
+
+\answer{Solution:}
+
+Since $S > 0$, we use:
+$$Z = \frac{S - 1}{\sqrt{\text{Var}(S)}} = \frac{22 - 1}{\sqrt{65.33}} = \frac{21}{8.083} = \boxed{2.60}$$
+
+\explanation{
+The "-1" is a continuity correction that improves accuracy. The Z-score follows a standard normal distribution under $H_0$. A Z-score of 2.60 means the observed S is 2.60 standard deviations away from what we'd expect if there were no trend.
+}
+
+\vspace{0.3cm}
+
+\textbf{(d) What is your conclusion about the trend?} \points{4}
+
+\answer{Solution:}
+
+Since $|Z| = 2.60 > 1.96$:
+\begin{itemize}
+    \item \textbf{Reject $H_0$} at $\alpha = 0.05$
+    \item There is a \textbf{statistically significant increasing trend} in rainfall
+    \item p-value $\approx$ 0.009 (for Z = 2.60)
+\end{itemize}
+
+\explanation{
+\textbf{Critical Values:}
+\begin{itemize}
+    \item $|Z| > 1.645$: Significant at $\alpha = 0.10$
+    \item $|Z| > 1.96$: Significant at $\alpha = 0.05$ (standard threshold)
+    \item $|Z| > 2.576$: Significant at $\alpha = 0.01$
+\end{itemize}
+Our Z = 2.60 $>$ 2.576, so the trend is actually significant even at $\alpha = 0.01$ level. This is strong evidence of increasing rainfall over the 8-year period.
+}
+
+\newpage
+
+\subsection*{Problem 2: Sen's Slope Estimator \points{15}}
+
+\textbf{Given pairwise slopes:}
+
+$Q_{12} = 8.00$, $Q_{13} = 5.00$, $Q_{14} = 6.00$, $Q_{15} = 6.25$, $Q_{23} = 2.00$
+
+$Q_{24} = 5.00$, $Q_{25} = 5.67$, $Q_{34} = 8.00$, $Q_{35} = 7.50$, $Q_{45} = 7.00$
+
+\vspace{0.3cm}
+
+\textbf{(a) Sort all 10 slopes in ascending order.} \points{3}
+
+\answer{Solution:}
+$$\boxed{2.00, 5.00, 5.00, 5.67, 6.00, 6.25, 7.00, 7.50, 8.00, 8.00}$$
+
+\explanation{
+Sorting is necessary because Sen's slope uses the \textbf{median}, which requires ordered data. Notice we have two 5.00 values and two 8.00 values - this is expected when multiple pairs have similar slopes.
+}
+
+\vspace{0.3cm}
+
+\textbf{(b) Calculate the Sen's slope estimator $\beta$.} \points{4}
+
+\answer{Solution:}
+
+With $n = 10$ slopes (even number), the median is the average of the 5th and 6th values:
+
+$$\beta = \frac{Q_{(5)} + Q_{(6)}}{2} = \frac{6.00 + 6.25}{2} = \boxed{6.125 \text{ m}^3\text{/s/year}}$$
+
+\explanation{
+\textbf{Why median instead of mean?}
+\begin{itemize}
+    \item Median is robust to outliers (extreme slopes don't bias the result)
+    \item Mean would be: $(2+5+5+5.67+6+6.25+7+7.5+8+8)/10 = 6.04$ (similar here)
+    \item For skewed data with outliers, median is more representative
+\end{itemize}
+The median slope represents the "typical" rate of change in the data.
+}
+
+\vspace{0.3cm}
+
+\textbf{(c) Interpret the meaning of this slope in engineering terms.} \points{4}
+
+\answer{Solution:}
+
+\begin{itemize}
+    \item Peak discharge is \textbf{increasing at 6.125 m$^3$/s per year}
+    \item Over 10 years: increase of $6.125 \times 10 = 61.25$ m$^3$/s
+    \item This represents approximately $61.25/100 = 61\%$ increase from Year 1
+\end{itemize}
+
+\explanation{
+\textbf{Engineering Implications:}
+\begin{itemize}
+    \item If this trend continues, infrastructure designed on historical data may become undersized
+    \item Flood risk is increasing - design standards may need updating
+    \item Possible causes: urbanization (more impervious surface), climate change, land use changes
+    \item This is a substantial rate of change that warrants investigation
+\end{itemize}
+}
+
+\vspace{0.3cm}
+
+\textbf{(d) Projected discharge in Year 10.} \points{4}
+
+\answer{Solution:}
+
+Method 1 - From Year 5:
+$$Q_{10} = Q_5 + \beta \times (10 - 5) = 125 + 6.125 \times 5 = 125 + 30.625 = \boxed{155.6 \text{ m}^3\text{/s}}$$
+
+Method 2 - From Year 1:
+$$Q_{10} = Q_1 + \beta \times (10 - 1) = 100 + 6.125 \times 9 = 100 + 55.125 = \boxed{155.1 \text{ m}^3\text{/s}}$$
+
+\explanation{
+Both methods give approximately the same answer (small difference due to rounding). Sen's slope allows us to:
+\begin{itemize}
+    \item Project future values assuming trend continues
+    \item Estimate historical values at times between measurements
+    \item Calculate total change over any time period
+\end{itemize}
+\textbf{Caution:} Extrapolating assumes the trend continues unchanged. For long-term projections (like 50+ years), consider uncertainty and whether the physical process driving the trend will persist.
+}
+
+\newpage
+
+\subsection*{Problem 3: Pettitt Test for Change Point Detection \points{15}}
+
+\textbf{Given $U_{t,T}$ values:}
+
+\begin{center}
+\begin{tabular}{|c|c|c||c|c|c|}
+\hline
+$t$ & $U_{t,T}$ & $|U_{t,T}|$ & $t$ & $U_{t,T}$ & $|U_{t,T}|$ \\
+\hline
+1 & -8 & 8 & 7 & -42 & 42 \\
+2 & -18 & 18 & 8 & -36 & 36 \\
+3 & -26 & 26 & 9 & -28 & 28 \\
+4 & -32 & 32 & 10 & -18 & 18 \\
+5 & -38 & 38 & 11 & -6 & 6 \\
+6 & -44 & \textcolor{red}{\textbf{44}} & & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+
+\textbf{(a) Determine the test statistic $K_\tau$.} \points{3}
+
+\answer{Solution:}
+$$K_\tau = \max_{1 \le t < T} |U_{t,T}| = \max(8, 18, 26, 32, 38, 44, 42, 36, 28, 18, 6) = \boxed{44}$$
+
+\explanation{
+$K_\tau$ is the maximum absolute value of U across all potential split points. This represents the "strongest evidence" for a change point anywhere in the series. The larger $K_\tau$, the more evidence for a real change point.
+}
+
+\vspace{0.3cm}
+
+\textbf{(b) Identify the change point location $\tau$.} \points{3}
+
+\answer{Solution:}
+
+The maximum $|U_{t,T}| = 44$ occurs at $t = 6$, therefore:
+$$\boxed{\tau = 6}$$
+
+This means the change point is \textbf{after the 6th observation} (i.e., data splits into first 6 vs. last 6 observations).
+
+\explanation{
+The change point location $\tau$ tells us WHERE in the time series the most significant shift occurs. In this case:
+\begin{itemize}
+    \item Observations 1-6: One regime (e.g., pre-change period)
+    \item Observations 7-12: Another regime (e.g., post-change period)
+\end{itemize}
+If this were annual data from 1985-1996, $\tau = 6$ means the change occurred after 1990.
+}
+
+\vspace{0.3cm}
+
+\textbf{(c) Calculate the p-value.} \points{5}
+
+\answer{Solution:}
+
+Given: $K_\tau = 44$, $T = 12$
+
+$$p \approx 2 \exp\left(-\frac{6K_\tau^2}{T^3 + T^2}\right)$$
+
+\textbf{Step 1: Calculate denominator}
+$$T^3 + T^2 = 12^3 + 12^2 = 1728 + 144 = 1872$$
+
+\textbf{Step 2: Calculate numerator}
+$$6K_\tau^2 = 6 \times 44^2 = 6 \times 1936 = 11616$$
+
+\textbf{Step 3: Calculate ratio}
+$$\frac{11616}{1872} = 6.205$$
+
+\textbf{Step 4: Calculate p-value}
+$$p \approx 2 \times \exp(-6.205) = 2 \times 0.00202 = \boxed{0.00404 \approx 0.004}$$
+
+\explanation{
+This formula is an asymptotic approximation valid for $T \geq 20$ (though we use it here for demonstration). The exponential function decreases rapidly as $K_\tau$ increases, meaning larger test statistics give smaller p-values (stronger evidence for change point).
+
+\textbf{Calculation tip:} $e^{-6.205} \approx 0.002$ (use calculator or $e^{-6} \approx 0.0025$)
+}
+
+\vspace{0.3cm}
+
+\textbf{(d) Is there a significant change point? What does negative $U_\tau$ indicate?} \points{4}
+
+\answer{Solution:}
+
+\textbf{Significance:}
+$$p = 0.004 < 0.05 \Rightarrow \text{\textbf{Yes, highly significant change point}}$$
+
+\textbf{Direction of change:}
+
+$U_\tau = -44$ (negative) means:
+\begin{itemize}
+    \item Values \textbf{before} $\tau$ tend to be \textbf{smaller} than values after
+    \item This indicates an \textbf{upward shift} (increase) in the data
+    \item Example: Mean flow increased after year 6
+\end{itemize}
+
+\explanation{
+\textbf{Interpreting the sign of $U_\tau$:}
+\begin{itemize}
+    \item $U_\tau < 0$ (negative): \textbf{Upward shift} - values increase after change point
+    \item $U_\tau > 0$ (positive): \textbf{Downward shift} - values decrease after change point
+\end{itemize}
+
+With p = 0.004 $<$ 0.01, this is actually significant even at the 1\% level, providing very strong evidence for a real change point.
+
+\textbf{Engineering action:} Split the dataset at $\tau = 6$, use post-change data (observations 7-12) for design if it represents current conditions.
+}
+
+\newpage
+
+%==============================================================================
+\section*{Part C: Analytical Interpretation Questions \points{25}}
+%==============================================================================
+
+\subsection*{Question 1 \points{12}}
+
+\textbf{Given Results:}
+\begin{itemize}
+    \item Mann-Kendall: S = +892, p = 0.0003
+    \item Sen's Slope: $\beta$ = +3.2 m$^3$/s/year, CI = [2.1, 4.3]
+    \item Pettitt: $K_\tau$ = 486, $\tau$ = 32 (year 2002), p = 0.0001
+    \item Mean before 2002: 125 m$^3$/s; Mean after 2002: 178 m$^3$/s
+    \item Urbanization project completed in 2002
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{(a) What type(s) of non-stationarity are present?} \points{4}
+
+\answer{Solution:}
+
+\textbf{BOTH} types of non-stationarity are present:
+
+\begin{enumerate}
+    \item \textbf{Trend:} Mann-Kendall p = 0.0003 $\ll$ 0.05
+    \begin{itemize}
+        \item Highly significant increasing trend
+        \item Sen's slope = +3.2 m$^3$/s/year confirms upward change
+    \end{itemize}
+
+    \item \textbf{Change Point:} Pettitt p = 0.0001 $\ll$ 0.05
+    \begin{itemize}
+        \item Highly significant abrupt shift in 2002
+        \item Mean jumped from 125 to 178 m$^3$/s (increase of 53 m$^3$/s = 42\%)
+    \end{itemize}
+\end{enumerate}
+
+\explanation{
+This is a complex case where urbanization caused BOTH:
+\begin{itemize}
+    \item An immediate jump in flow (change point) due to increased impervious surfaces
+    \item A continuing upward trend as development continued
+\end{itemize}
+The physical evidence (2002 urbanization) validates both statistical findings. When change points and trends coexist, the Mann-Kendall test may detect a "trend" that's actually driven by the step change.
+}
+
+\vspace{0.3cm}
+
+\textbf{(b) Which dataset should you use for bridge design (75-year life)?} \points{4}
+
+\answer{Solution:}
+
+\textbf{Use post-2002 data only} (last 22 years of the 50-year record):
+
+\begin{itemize}
+    \item Represents \textbf{current urbanized conditions}
+    \item Mean = 178 m$^3$/s (NOT 125 m$^3$/s from pre-urban period)
+    \item Account for continuing trend: Project forward conservatively
+    \item Example projection for Year 25 after change:
+    $$178 + (3.2 \times 25) = 178 + 80 = 258 \text{ m}^3\text{/s}$$
+\end{itemize}
+
+\explanation{
+\textbf{Why NOT use all 50 years?}
+\begin{itemize}
+    \item Pre-2002 data represents a different (non-urbanized) watershed
+    \item Mixing regimes gives incorrect frequency estimates
+    \item Design would be based on outdated conditions
+\end{itemize}
+
+\textbf{Why NOT use pre-2002 data?}
+\begin{itemize}
+    \item No longer represents reality - urbanization changed the watershed
+    \item Would severely underestimate design flows (125 vs 178 m$^3$/s)
+\end{itemize}
+
+The bridge will exist in the post-urbanization reality, so use that data.
+}
+
+\vspace{0.3cm}
+
+\textbf{(c) Additional considerations and safety factors?} \points{4}
+
+\answer{Solution:}
+
+\begin{enumerate}
+    \item \textbf{Account for continuing trend:}
+    \begin{itemize}
+        \item Project mean flow for mid-design life (Year 37.5)
+        \item Add uncertainty from Sen's slope CI: use upper bound (4.3 m$^3$/s/year)
+    \end{itemize}
+
+    \item \textbf{Limited post-change record:}
+    \begin{itemize}
+        \item Only 22 years of urbanized data - consider regional pooling
+        \item Increase safety factor by 10-20\% for uncertainty
+    \end{itemize}
+
+    \item \textbf{Climate change considerations:}
+    \begin{itemize}
+        \item 75-year bridge life extends to 2100+
+        \item Consider climate projections for region
+        \item Non-stationary frequency analysis methods
+    \end{itemize}
+
+    \item \textbf{Adaptive management:}
+    \begin{itemize}
+        \item Design for future upgrades if possible
+        \item Plan monitoring program
+        \item Re-evaluate every 10-15 years
+    \end{itemize}
+\end{enumerate}
+
+\explanation{
+Long-lived infrastructure in non-stationary environments requires:
+\begin{itemize}
+    \item Conservative design based on projected future, not historical average
+    \item Explicit consideration of uncertainty through safety factors
+    \item Flexibility for future adaptation
+    \item Documentation of assumptions and methods
+\end{itemize}
+The worst outcome would be a bridge that fails before its design life due to underestimated flows.
+}
+
+\newpage
+
+\subsection*{Question 2 \points{13}}
+
+\textbf{Given Results:}
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+Test & Result & P-value \\
+\hline
+Mann-Kendall S & -245 & 0.12 \\
+Sen's Slope & -1.8 mm/year & -- \\
+Pettitt $K_\tau$ & 98 & 0.08 \\
+\hline
+\end{tabular}
+\end{center}
+
+Authority wants to immediately reduce water supply by 30\%.
+
+\vspace{0.3cm}
+
+\textbf{(a) Are results statistically significant at $\alpha = 0.05$?} \points{3}
+
+\answer{Solution:}
+
+\textbf{NO, neither result is statistically significant:}
+
+\begin{itemize}
+    \item Mann-Kendall: p = 0.12 $>$ 0.05 $\Rightarrow$ \textbf{Not significant}
+    \item Pettitt: p = 0.08 $>$ 0.05 $\Rightarrow$ \textbf{Not significant}
+\end{itemize}
+
+At $\alpha = 0.05$, we \textbf{fail to reject $H_0$} for both tests.
+
+\explanation{
+The observed patterns (negative S, some evidence of change point) could reasonably occur by chance. While p = 0.08 and 0.12 suggest some evidence, it's not strong enough to meet the standard 5\% significance threshold. These are "suggestive but inconclusive" results.
+}
+
+\vspace{0.3cm}
+
+\textbf{(b) Should they make major operational changes based solely on these results?} \points{5}
+
+\answer{Solution:}
+
+\textbf{NO - Major decision not justified by current evidence:}
+
+\begin{enumerate}
+    \item \textbf{Statistical evidence is weak:}
+    \begin{itemize}
+        \item Neither trend nor change point is significant at $\alpha = 0.05$
+        \item Observed patterns could be due to natural variability
+        \item 30\% reduction is a drastic action for inconclusive evidence
+    \end{itemize}
+
+    \item \textbf{Economic and social consequences:}
+    \begin{itemize}
+        \item Reducing supply by 30\% has major impacts on users
+        \item Could cause water rationing, affect industries
+        \item Decision should be based on stronger evidence
+    \end{itemize}
+
+    \item \textbf{Better approach:}
+    \begin{itemize}
+        \item Implement water conservation measures (smaller, reversible)
+        \item Continue monitoring and data collection
+        \item Plan for contingencies but don't commit to drastic cuts
+    \end{itemize}
+\end{enumerate}
+
+\explanation{
+\textbf{Engineering judgment principle:} The magnitude of the response should match the strength of evidence. Weak statistical evidence (p $>$ 0.05) does not justify major irreversible decisions. However, the concerning pattern (negative trend, p = 0.12) does warrant attention and precautionary measures.
+
+\textbf{Risk assessment:}
+\begin{itemize}
+    \item Type I error (false alarm): Cut supply when not needed $\Rightarrow$ economic damage
+    \item Type II error (missed threat): Don't act when needed $\Rightarrow$ water shortage
+\end{itemize}
+Balance these risks with proportional responses.
+}
+
+\vspace{0.3cm}
+
+\textbf{(c) What additional analyses would you recommend? (At least 3)} \points{5}
+
+\answer{Solution:}
+
+\begin{enumerate}
+    \item \textbf{Physical investigation:}
+    \begin{itemize}
+        \item Identify any known watershed changes (land use, climate patterns)
+        \item Check for data quality issues (gauge problems, measurement changes)
+        \item Look for physical explanation of apparent decline
+    \end{itemize}
+
+    \item \textbf{Regional analysis:}
+    \begin{itemize}
+        \item Compare with neighboring watersheds/reservoirs
+        \item If regional pattern exists $\Rightarrow$ more likely real
+        \item If only local $\Rightarrow$ may be site-specific issue
+    \end{itemize}
+
+    \item \textbf{Extended dataset:}
+    \begin{itemize}
+        \item Collect 5-10 more years of data
+        \item Re-run tests with larger sample size
+        \item More data increases statistical power
+    \end{itemize}
+
+    \item \textbf{Alternative statistical methods:}
+    \begin{itemize}
+        \item Spearman's rho test for trends
+        \item CUSUM analysis for change points
+        \item Bootstrap confidence intervals for uncertainty
+    \end{itemize}
+
+    \item \textbf{Climate analysis:}
+    \begin{itemize}
+        \item Check correlation with climate indices (PDO, AMO, ENSO)
+        \item Analyze precipitation trends in watershed
+        \item Consider multi-decadal natural cycles
+    \end{itemize}
+
+    \item \textbf{Water balance modeling:}
+    \begin{itemize}
+        \item Model inflows under different scenarios
+        \item Estimate future supply under various conditions
+        \item Quantify risk of shortage with confidence intervals
+    \end{itemize}
+\end{enumerate}
+
+\explanation{
+\textbf{Key principle:} Before making major decisions with weak statistical evidence, gather more information:
+\begin{itemize}
+    \item \textbf{More data} $\rightarrow$ stronger statistical power
+    \item \textbf{Multiple lines of evidence} $\rightarrow$ more confidence
+    \item \textbf{Physical understanding} $\rightarrow$ validates or questions statistics
+\end{itemize}
+
+If the decline is real, these additional analyses will strengthen the case. If it's natural variability, the extra investigation will prevent costly mistakes. Either way, the authority makes a better-informed decision.
+}
+
+\vspace{1cm}
+
+\begin{center}
+\fbox{\parbox{0.9\textwidth}{
+\centering
+\Large\textbf{END OF SOLUTIONS}\\[0.3cm]
+\normalsize
+\textit{Key Takeaways:}
+\begin{itemize}
+    \item Statistical significance requires p-value $<$ $\alpha$ (typically 0.05)
+    \item Mann-Kendall detects gradual trends; Pettitt detects abrupt changes
+    \item Sen's slope quantifies the magnitude of change
+    \item Engineering decisions should combine statistical evidence with physical understanding
+    \item The strength of response should match the strength of evidence
+\end{itemize}
+}}
+\end{center}
+
+\end{document}
