@@ -1,0 +1,365 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usepackage{xcolor}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{CEE 5XX: Advanced Water Resources Engineering}
+\rhead{Trend \& Breakpoint Analysis Exam}
+\cfoot{Page \thepage\ of \pageref{LastPage}}
+
+% Custom commands
+\newcommand{\points}[1]{\textbf{[#1 points]}}
+\newcommand{\blank}[1]{\underline{\hspace{#1}}}
+
+\begin{document}
+
+% Title Section
+\begin{center}
+    \Large\textbf{Trend Detection and Breakpoint Analysis Exam}\\[0.3cm]
+    \large CEE 5XX: Advanced Water Resources Engineering\\
+    Jackson State University\\[0.3cm]
+    \normalsize
+    \textbf{Duration:} 1 Hour \quad | \quad \textbf{Total Points:} 100
+\end{center}
+
+\vspace{0.3cm}
+
+\noindent\textbf{Name:} \blank{8cm} \hfill \textbf{Date:} \blank{3cm}
+
+\vspace{0.3cm}
+
+\noindent\fbox{\parbox{\textwidth-2\fboxsep}{
+\textbf{Instructions:}
+\begin{itemize}[noitemsep,topsep=2pt]
+    \item Answer ALL questions
+    \item Show all calculations for numerical problems
+    \item Calculator and formula sheet are permitted
+    \item No electronic devices except calculator
+\end{itemize}
+}}
+
+\vspace{0.5cm}
+
+%==============================================================================
+\section*{Part A: Multiple Choice Questions \points{30}}
+%==============================================================================
+
+\textit{Circle the best answer for each question. Each question is worth 5 points.}
+
+\vspace{0.3cm}
+
+\begin{enumerate}[leftmargin=*]
+
+\item A hydrologic time series dataset has a strongly skewed distribution with several extreme outliers. Which test is most appropriate for detecting monotonic trends?
+
+\begin{enumerate}[label=(\alph*)]
+    \item Linear regression with t-test
+    \item Mann-Kendall test
+    \item Two-sample t-test
+    \item Pearson correlation test
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\item In the Mann-Kendall test, if the S statistic equals +180 for a dataset with 25 observations, and the calculated p-value is 0.08, what should you conclude at $\alpha = 0.05$?
+
+\begin{enumerate}[label=(\alph*)]
+    \item Reject $H_0$; significant increasing trend exists
+    \item Fail to reject $H_0$; no significant trend detected
+    \item The trend is decreasing because S is positive
+    \item The test is invalid due to small sample size
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\item Which statement correctly describes the difference between trends and change points in hydrologic data?
+
+\begin{enumerate}[label=(\alph*)]
+    \item Trends are detected by Pettitt test; change points by Mann-Kendall
+    \item Trends are gradual monotonic changes; change points are abrupt shifts
+    \item Both represent the same type of non-stationarity
+    \item Change points occur only in spatial data
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\item You calculate Sen's slope = +2.5 mm/year with 95\% CI = [+1.8, +3.2] for annual rainfall. The Mann-Kendall p-value is 0.02. What does this indicate?
+
+\begin{enumerate}[label=(\alph*)]
+    \item No significant trend because the slope is small
+    \item Significant increasing trend with high confidence in magnitude
+    \item Decreasing trend since confidence interval is positive
+    \item Results are inconclusive without the mean rainfall value
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\item For a Pettitt test, what does the $U_{t,T}$ statistic represent?
+
+\begin{enumerate}[label=(\alph*)]
+    \item The mean difference between two segments
+    \item The sum of pairwise rank comparisons between segments before and after time $t$
+    \item The variance ratio between two segments
+    \item The correlation coefficient between time and data values
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\item A stream discharge dataset (40 years) shows: Mann-Kendall p = 0.03, Sen's slope = +2.1 m$^3$/s/year. The post-change period after a detected dam construction has only 3 years of data. What is the most appropriate engineering action?
+
+\begin{enumerate}[label=(\alph*)]
+    \item Use the 3-year post-change period for design
+    \item Ignore the change point and use all 40 years
+    \item Document the change point but use regional pooling or conservative design factors
+    \item Wait indefinitely until post-change data reaches 30 years
+\end{enumerate}
+
+\end{enumerate}
+
+\newpage
+
+%==============================================================================
+\section*{Part B: Short Numerical Problems \points{45}}
+%==============================================================================
+
+\subsection*{Problem 1: Mann-Kendall S Statistic Calculation \points{15}}
+
+You are given the following \textbf{partial} Mann-Kendall analysis for 8 years of annual rainfall data (mm):
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+Year & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+\hline
+Rainfall (mm) & 850 & 870 & 865 & 890 & 900 & 895 & 920 & 930 \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+
+The following pairwise comparisons have been completed:
+
+\begin{itemize}[noitemsep]
+    \item Comparisons involving Year 1: All 7 comparisons yield $sgn = +1$ (S contribution = +7)
+    \item Comparisons involving Year 2: 5 positive, 1 negative (S contribution = +4)
+    \item Comparisons involving Year 3: All 5 comparisons yield $sgn = +1$ (S contribution = +5)
+    \item Comparisons involving Year 4: 3 positive, 1 negative (S contribution = +2)
+    \item Comparisons involving Year 5: 2 positive, 1 negative (S contribution = +1)
+    \item Comparisons involving Year 6: All 2 comparisons yield $sgn = +1$ (S contribution = +2)
+    \item Comparisons involving Year 7: 1 positive (S contribution = +1)
+\end{itemize}
+
+\textbf{Tasks:}
+
+\begin{enumerate}[label=(\alph*)]
+    \item Calculate the total Mann-Kendall S statistic. \points{3}
+
+    \vspace{2cm}
+
+    \item Calculate the variance of S using: $\text{Var}(S) = \frac{n(n-1)(2n+5)}{18}$ \points{4}
+
+    \vspace{3cm}
+
+    \item Calculate the standardized Z-score. (Use $Z = \frac{S-1}{\sqrt{\text{Var}(S)}}$ since $S > 0$) \points{4}
+
+    \vspace{3cm}
+
+    \item What is your conclusion about the trend? (Hint: For $|Z| > 1.96$, p < 0.05) \points{4}
+
+    \vspace{2cm}
+\end{enumerate}
+
+\newpage
+
+\subsection*{Problem 2: Sen's Slope Estimator \points{15}}
+
+For a 5-year dataset of annual peak discharge (m$^3$/s):
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Year & 1 & 2 & 3 & 4 & 5 \\
+\hline
+Discharge & 100 & 108 & 110 & 118 & 125 \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+
+The following pairwise slopes $Q_{ij} = \frac{X_j - X_i}{j - i}$ have been calculated:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Pair & Calculation & Slope ($Q_{ij}$) & Pair & Slope ($Q_{ij}$) \\
+\hline
+$Q_{12}$ & $(108-100)/(2-1)$ & 8.00 & $Q_{25}$ & 5.67 \\
+$Q_{13}$ & $(110-100)/(3-1)$ & 5.00 & $Q_{34}$ & 8.00 \\
+$Q_{14}$ & $(118-100)/(4-1)$ & 6.00 & $Q_{35}$ & 7.50 \\
+$Q_{15}$ & $(125-100)/(5-1)$ & 6.25 & $Q_{45}$ & 7.00 \\
+$Q_{23}$ & $(110-108)/(3-2)$ & 2.00 & & \\
+$Q_{24}$ & $(118-108)/(4-2)$ & 5.00 & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Tasks:}
+
+\begin{enumerate}[label=(\alph*)]
+    \item Sort all 10 slopes in ascending order. \points{3}
+
+    \vspace{2cm}
+
+    \item Calculate the Sen's slope estimator $\beta$ (median of all slopes). \points{4}
+
+    \vspace{3cm}
+
+    \item Interpret the meaning of this slope in engineering terms. \points{4}
+
+    \vspace{3cm}
+
+    \item If this trend continues, what would be the projected discharge in Year 10? \points{4}
+
+    \vspace{3cm}
+\end{enumerate}
+
+\newpage
+
+\subsection*{Problem 3: Pettitt Test for Change Point Detection \points{15}}
+
+A hydrologist analyzed 12 years of annual peak flow data. The $U_{t,T}$ statistics for each potential split point $t$ have been calculated as follows:
+
+\begin{center}
+\begin{tabular}{|c|c|c||c|c|c|}
+\hline
+$t$ & $U_{t,T}$ & $|U_{t,T}|$ & $t$ & $U_{t,T}$ & $|U_{t,T}|$ \\
+\hline
+1 & -8 & 8 & 7 & -42 & 42 \\
+2 & -18 & 18 & 8 & -36 & 36 \\
+3 & -26 & 26 & 9 & -28 & 28 \\
+4 & -32 & 32 & 10 & -18 & 18 \\
+5 & -38 & 38 & 11 & -6 & 6 \\
+6 & -44 & 44 & & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Tasks:}
+
+\begin{enumerate}[label=(\alph*)]
+    \item Determine the test statistic $K_\tau = \max_{1 \le t < T} |U_{t,T}|$ \points{3}
+
+    \vspace{2cm}
+
+    \item Identify the change point location $\tau$ (the value of $t$ where $|U_{t,T}|$ is maximum) \points{3}
+
+    \vspace{2cm}
+
+    \item Calculate the p-value using: $p \approx 2 \exp\left(-\frac{6K_\tau^2}{T^3 + T^2}\right)$ where $T = 12$ \points{5}
+
+    \vspace{4cm}
+
+    \item Is there a significant change point at $\alpha = 0.05$? What does the negative $U_\tau$ indicate about the direction of change? \points{4}
+
+    \vspace{3cm}
+\end{enumerate}
+
+\newpage
+
+%==============================================================================
+\section*{Part C: Analytical Interpretation Questions \points{25}}
+%==============================================================================
+
+\subsection*{Question 1 \points{12}}
+
+You are a consulting engineer analyzing 50 years of streamflow data for a watershed. Your analysis yields the following results:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Mann-Kendall Test:} S = +892, p-value = 0.0003
+    \item \textbf{Sen's Slope:} $\beta$ = +3.2 m$^3$/s/year, 95\% CI = [2.1, 4.3]
+    \item \textbf{Pettitt Test:} $K_\tau$ = 486, $\tau$ = 32 (year 2002), p-value = 0.0001
+    \item \textbf{Mean flow before 2002:} 125 m$^3$/s
+    \item \textbf{Mean flow after 2002:} 178 m$^3$/s
+    \item \textbf{Known event:} Major urbanization project completed in 2002
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Based on these results:}
+
+\begin{enumerate}[label=(\alph*)]
+    \item What type(s) of non-stationarity are present in the data? Explain your reasoning. \points{4}
+
+    \vspace{4cm}
+
+    \item If you were designing a new bridge with a 75-year design life, which dataset should you use for frequency analysis and why? \points{4}
+
+    \vspace{4cm}
+
+    \item What additional considerations or safety factors would you recommend? \points{4}
+
+    \vspace{4cm}
+\end{enumerate}
+
+\newpage
+
+\subsection*{Question 2 \points{13}}
+
+A municipal water authority presents you with the following analysis of their reservoir inflow data (35 years):
+
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Statistical Test} & \textbf{Result} & \textbf{P-value} \\
+\hline
+Mann-Kendall S statistic & -245 & 0.12 \\
+Sen's Slope & -1.8 mm/year & -- \\
+Pettitt Test $K_\tau$ & 98 & 0.08 \\
+\hline
+\end{tabular}
+\end{center}
+
+The authority is concerned about declining water availability and wants to immediately reduce their water supply commitments by 30\% based on these results.
+
+\vspace{0.3cm}
+
+\textbf{Provide your professional engineering assessment:}
+
+\begin{enumerate}[label=(\alph*)]
+    \item Are the detected trend and change point statistically significant at $\alpha = 0.05$? \points{3}
+
+    \vspace{3cm}
+
+    \item Should the authority make major operational changes based solely on these results? Justify your answer. \points{5}
+
+    \vspace{5cm}
+
+    \item What additional analyses or data would you recommend before making such decisions? List at least 3 specific recommendations. \points{5}
+
+    \vspace{6cm}
+\end{enumerate}
+
+\vspace{1cm}
+
+\begin{center}
+\fbox{\parbox{0.8\textwidth}{
+\centering
+\textbf{END OF EXAM}\\[0.2cm]
+\textit{Please review your answers before submitting.}\\
+\textit{Remember: Good engineering judgment combines statistical evidence with physical understanding.}
+}}
+\end{center}
+
+\end{document}
